@@ -36,7 +36,7 @@ class OtpsCodeController extends Controller
 
     public function send(Request $request)
     {
-      
+       
         if(!$request->otp_direct_verified){
             $validatedData = $request->validate([
                 'otp_code' => 'required|min:8|max:8'
