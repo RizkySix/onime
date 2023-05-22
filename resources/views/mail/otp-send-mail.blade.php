@@ -2,7 +2,7 @@
 # Introduction
 
 The body of your message.
-this is your 8 digits code {{ $otp }}
+this is your 8 digits code {{ $data['otp_code'] }} and {{ $data['url_verify'] }}
 
 <x-mail::button :url="''">
 Button Text

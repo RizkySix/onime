@@ -9,11 +9,17 @@
         </div>
     @endif
 
-        <form action="/send-otp" method="POST">
+        <form action="{{ route('send-otp' , ['id' => auth()->user()->id]) }}" method="POST">
             @csrf
             <div>
-                <x-input-label for="code_otp" :value="__('Kode OTP')" />
-                <x-text-input id="code_otp" name="code_otp" type="text" class="mt-1 block w-full" autocomplete="code_otp" />
+                <x-input-label for="otp_code" :value="__('Kode OTP')" />
+                <x-text-input id="otp_code" name="otp_code" type="text" class="mt-1 block w-full" autocomplete="otp_code" required />
+                @error('otp_code')
+                    {{ $message }}
+                @enderror
+                @if (session('invalid'))
+                    {{ session('invalid') }}
+                @endif
             </div>
 
             

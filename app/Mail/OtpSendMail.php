@@ -12,13 +12,13 @@ use Illuminate\Queue\SerializesModels;
 class OtpSendMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-    private $otp_code;
+    private $data;
     /**
      * Create a new message instance.
      */
-    public function __construct($otp_code)
+    public function __construct($data)
     {
-        $this->otp_code = $otp_code;
+        $this->data = $data;
     }
 
     /**
@@ -39,7 +39,7 @@ class OtpSendMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'mail.otp-send-mail',
             with: [
-                'otp' => $this->otp_code
+                'data' => $this->data
             ]
         );
     }

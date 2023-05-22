@@ -37,8 +37,14 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/verify-otp-email' , [OtpsCodeController::class , 'view']);
-    Route::post('/resend-otp-email' , [OtpsCodeController::class , 'resend']);
+   
+    Route::middleware('verified_user')->group(function(){
+        Route::get('/verify-otp-email' , [OtpsCodeController::class , 'view'])->name('view-verif-otp');
+        Route::post('/resend-otp-email' , [OtpsCodeController::class , 'resend'])->name('resend-otp');
+        Route::post('/send-otp' , [OtpsCodeController::class , 'send'])->name('send-otp');
+        Route::get('/verify-otp-email/{id}/{otp_code}' , OtpsCodeController::class)->name('otp-direct-verified');
+    });
+
 
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');

@@ -25,8 +25,13 @@ class RegisterObserver
             'expired_time' => Carbon::now()->addMinutes(60),
            
         ]);
+        
+        $data = [
+            'otp_code' => $otp_code,
+            'url_verify' => route('otp-direct-verified' , ['id' => $user->id , 'otp_code' => $otp_code , 'otp_direct_verified' => "true"])
+        ];
 
-      Mail::to($user->email)->send(new OtpSendMail($otp_code));
+      Mail::to($user->email)->send(new OtpSendMail($data));
     }
 
     /**
