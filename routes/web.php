@@ -19,8 +19,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'otp_verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'otp_verified'])->group(function () {
     Route::get('/dashboard' , [DashboardController::class , 'view'])->name('dashboard');
+    Route::post('/generate-token' , [DashboardController::class , 'generate_token'])->name('token-maker');
 });
 
 
