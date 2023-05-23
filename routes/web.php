@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnimeNameController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -19,9 +20,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'otp_verified'])->group(function () {
+Route::middleware(['auth', 'otp_verified'])->group(function () {
     Route::get('/dashboard' , [DashboardController::class , 'view'])->name('dashboard');
     Route::post('/generate-token' , [DashboardController::class , 'generate_token'])->name('token-maker');
+   Route::resource('/anime-name' , AnimeNameController::class);
 });
 
 

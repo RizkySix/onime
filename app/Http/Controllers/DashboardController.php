@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class DashboardController extends Controller
 {
@@ -18,7 +20,7 @@ class DashboardController extends Controller
 
    public function generate_token()
    {
-      $user = request()->user();
+      $user = auth()->user();
       $user->tokens()->delete();
 
       $tokenName = 'onime-api-' . $user->name;
@@ -31,4 +33,6 @@ class DashboardController extends Controller
       
       return redirect('dashboard');
    }
+
+   
 }

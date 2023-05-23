@@ -15,6 +15,22 @@
                     <input type="text" readonly disabled value="{{ auth()->user()->token }}" style="width:500px;">
                     <button>Buat Token</button>
                     </form>
+                    <br><br>
+                    <div class="mt-4">
+                        <form action="/anime-name" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <label for="">Kirim Video</label> <br>
+                        <input type="text" name="anime_name" placeholder="anime name">
+                        <input type="text" name="total_episode" placeholder="total eps">
+                        <input type="text" name="studio" placeholder="studio">
+                        <input type="text" name="author" placeholder="author"><br><br>
+                        <textarea name="description" id="" cols="30" rows="10"></textarea> <br>
+                        <input type="file" name="video"> <br><br>
+                        <x-primary-button>
+                            {{ __('Kirim') }}
+                        </x-primary-button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
