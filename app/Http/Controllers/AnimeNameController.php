@@ -25,6 +25,15 @@ class AnimeNameController extends Controller
         //
     }
 
+      /**
+     * Slug maker .
+     */
+
+     public function slug_maker()
+     {
+        
+     }
+
     /**
      * Store a newly created resource in storage.
      */

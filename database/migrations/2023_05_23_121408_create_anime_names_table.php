@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('anime_names', function (Blueprint $table) {
             $table->id();
             $table->string('anime_name')->unique();
+            $table->string('slug')->unique();
             $table->integer('total_episode');
             $table->float('rating')->default(0);
             $table->string('studio');
