@@ -14,4 +14,9 @@ class AnimeName extends Model
     {
         return $this->hasMany(AnimeVideo::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

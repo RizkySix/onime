@@ -25,7 +25,30 @@
                         <input type="text" name="studio" placeholder="studio">
                         <input type="text" name="author" placeholder="author"><br><br>
                         <textarea name="description" id="" cols="30" rows="10"></textarea> <br>
-                        <input type="file" name="video"> <br><br>
+                        <br>
+                        @if (session('found-clone'))
+                            foundid
+                        @endif
+                        <x-primary-button>
+                            {{ __('Kirim') }}
+                        </x-primary-button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4">
+                        <form action="{{ route('anime-name.store.zip') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <label for="">Kirim Video</label> <br>
+                        <input type="text" name="anime_name" placeholder="anime name">
+                        <input type="text" name="total_episode" placeholder="total eps">
+                        <input type="text" name="studio" placeholder="studio">
+                        <input type="text" name="author" placeholder="author"><br><br>
+                        <textarea name="description" id="" cols="30" rows="10"></textarea> <br>
+                        <br>
+                      <input type="file" name="zip"><br><br>
+                      @if (session('info'))
+                          {{ session('info') }}
+                      @endif
                         <x-primary-button>
                             {{ __('Kirim') }}
                         </x-primary-button>

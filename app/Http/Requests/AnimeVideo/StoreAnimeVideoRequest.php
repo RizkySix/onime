@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\AnimeName;
+namespace App\Http\Requests\AnimeVideo;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAnimeNameRequest extends FormRequest
+class StoreAnimeVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,8 @@ class StoreAnimeNameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'anime_name' => 'required|string|min:3|unique:anime_names',
-            'total_episode' => 'required|integer',
-            'studio' => 'required|string|min:3',
-            'author' => 'required|string|min:3',
-            'description' => 'required|string|min:3',
-         
+            'video' => 'required|mimes:mp4,mov,avi,mkv',
+            'anime_name_slug' => 'required'
         ];
     }
 }
