@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
@@ -10,10 +11,10 @@ class DashboardController extends Controller
 {
    public function view(Request $request)
    {
-
+      
   
      return view('dashboard' , [
-       
+         'user' => User::all()
      ]);
    }
    

@@ -44,6 +44,15 @@ return [
             'throw' => false,
         ],
 
+
+        'short_clip' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/' . env('SHORT_CLIP_FOLDER', 'short_anime_clip')),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

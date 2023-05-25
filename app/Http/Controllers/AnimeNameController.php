@@ -98,7 +98,7 @@ class AnimeNameController extends Controller
         'description' => $request->description,
        ]);
 
-       Storage::makeDirectory($request->anime_name);
+       Storage::makeDirectory($clearAnimeName);
 
        if($from_zip_method !== null){
           return $newAnime;

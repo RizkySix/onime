@@ -10,6 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }} 
+                   
                     <form action="{{ route('token-maker') }}" method="POST">
                     @csrf
                     <input type="text" readonly disabled value="{{ auth()->user()->token }}" style="width:500px;">

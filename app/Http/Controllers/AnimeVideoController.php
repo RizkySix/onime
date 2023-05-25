@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AnimeVideo\StoreAnimeVideoRequest;
 use App\Http\Requests\AnimeVideo\UpdateAnimeVideoRequest;
+use App\Jobs\ClipingShortAnime;
 use App\Models\AnimeName;
 use App\Models\AnimeVideo;
 use Illuminate\Support\Facades\DB;
@@ -65,10 +66,9 @@ class AnimeVideoController extends Controller
             $video_duration = floor($videoInfo->get('duration') / 60);
             
           $disk =  Storage::disk('public')->putFileAs($directory , $video_detail , $video_name);
-       
             $url = Storage::disk('public')->url($directory . '/' . $video_name);
     
-            AnimeVideo::create([
+         $newAnimeVideo = AnimeVideo::create([
                 'anime_name_id' => $newAnime,
                 'anime_eps' => $video_name,
                 'resolution' => $videoInfo->get('height'),
@@ -78,8 +78,19 @@ class AnimeVideoController extends Controller
             ]);
 
 
+            //call a job to make short video
+            $short_data = [
+                'disk' => $disk,
+                'directory' => $directory,
+                'video_name' => $video_name,
+                'anime_video_id' => $newAnimeVideo->id
+            ];
+
+            dispatch(new ClipingShortAnime($short_data));
+
             return back();
-            
+
+          
         }else{
             return back()->with('no-match', 'not match');
         }
@@ -103,7 +114,7 @@ class AnimeVideoController extends Controller
            
            Storage::createDirectory('tmp-dir');
            $zipDetail->extractTo('storage/tmp-dir');
-
+           
            for($i = 0; $i < $numFiles; $i++){
             $idx = $zipDetail->statIndex($i);
             $full_name = $idx['name'];
@@ -119,6 +130,7 @@ class AnimeVideoController extends Controller
                 DB::rollBack();
                 Storage::deleteDirectory('/tmp-dir');
                 Storage::deleteDirectory($directory);
+                Storage::disk('short_clip')->deleteDirectory('short-' . $directory);
                 return false; /* response(['wrong-format' => 'Format File Not Allowed']); */
             }
 
@@ -126,6 +138,7 @@ class AnimeVideoController extends Controller
                 DB::rollBack();
                 Storage::deleteDirectory('/tmp-dir');
                 Storage::deleteDirectory($directory);
+                Storage::disk('short_clip')->deleteDirectory('short-' . $directory);
                 return false; /* response(['wrong-format' => 'Format File Not Allowed']); */
             }
 
@@ -144,8 +157,8 @@ class AnimeVideoController extends Controller
           $video_duration = floor($videoInfo->get('duration') / 60);
 
           $url = Storage::disk('public')->url($target);
-    
-          AnimeVideo::create([
+
+       $newAnimeVideo = AnimeVideo::create([
               'anime_name_id' => $newAnime,
               'anime_eps' => $video_name,
               'resolution' => $videoInfo->get('height'),
@@ -154,6 +167,16 @@ class AnimeVideoController extends Controller
               'video_url' => $url
           ]);
 
+           //call a job to make short video
+           $short_data = [
+            'disk' => $target,
+            'directory' => $directory,
+            'video_name' => $video_name,
+            'anime_video_id' => $newAnimeVideo->id
+        ];
+
+     
+       dispatch(new ClipingShortAnime($short_data));
            
         }
 

@@ -14,4 +14,9 @@ class AnimeVideo extends Model
     {
         return $this->belongsTo(AnimeName::class);
     }
+
+    public function anime_short()
+    {
+        return $this->hasOne(AnimeVideoShort::class);
+    }
 }
