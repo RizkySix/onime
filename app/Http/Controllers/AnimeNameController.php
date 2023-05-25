@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AnimeName\StoreAnimeNameRequest;
 use App\Http\Requests\AnimeName\UpdateAnimeNameRequest;
 use App\Models\AnimeName;
+use App\Observers\AnimeNameObserver;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,7 +17,9 @@ class AnimeNameController extends Controller
      */
     public function index()
     {
-        //
+        return view('anime.all-anime-view' , [
+            'anime_name' => AnimeName::with(['anime_video:video_url,anime_name_id'])->get()
+        ]);
     }
 
     /**
@@ -56,15 +59,29 @@ class AnimeNameController extends Controller
         $loop = count($arrAnime);
 
         for($i = 0; $i < $loop; $i++){
-            if($arrAnime[$i] == null){
-                unset($arrAnime[$i]);
+            //hashmap
+            $arrMap = [];
+            $loopStr = strlen($arrAnime[$i]);
+            $plus = 1;
+            for($k = 0; $k < $loopStr; $k++){
+                $arrMap[$arrAnime[$i][$k]] = $plus;
+                $plus++;
             }
+
+            if($arrAnime[$i] == null || count($arrMap) === 1 && isset($arrMap['/'])){
+                unset($arrAnime[$i]);
+            }elseif(strpos($arrAnime[$i] , '/') !== false){
+                $arrAnime[$i] = str_replace('/', '', $arrAnime[$i]);
+            }
+
+            
         }
 
         $result = implode(' ' , $arrAnime);
+        
         return $result;
 
-     }
+     }  
     
     /**
      * Store a newly created resource in storage.
@@ -98,7 +115,7 @@ class AnimeNameController extends Controller
         'description' => $request->description,
        ]);
 
-       Storage::makeDirectory($clearAnimeName);
+       Storage::makeDirectory('F-' . $clearAnimeName);
 
        if($from_zip_method !== null){
           return $newAnime;
@@ -146,7 +163,7 @@ class AnimeNameController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AnimeName $animeName)
+    public function show(AnimeName $anime_name)
     {
         //
     }
@@ -154,23 +171,53 @@ class AnimeNameController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AnimeName $animeName)
+    public function edit(AnimeName $anime_name)
     {
-        //
+        return view('anime.edit-anime' , [
+            'anime_name' => $anime_name->load('anime_video:video_url,anime_name_id')
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAnimeNameRequest $request, AnimeName $animeName)
+    public function update(UpdateAnimeNameRequest $request, AnimeName $anime_name)
     {
-        //
+       $validatedData = $request->validated();
+        
+       $slug = $anime_name->slug;
+       $clearAnimeName = $anime_name->anime_name;
+       if($validatedData['anime_name'] != $anime_name->anime_name){
+            $clearAnimeName = $this->remove_white_space($validatedData['anime_name']);
+            $slug = $this->slug_maker($clearAnimeName);
+
+
+            $oldPath = Storage::path('F-' . $anime_name->anime_name);
+            $newPath = Storage::path('F-' . $clearAnimeName);
+            rename($oldPath, $newPath);
+
+            $AnimeNameObserver = new AnimeNameObserver;
+            $AnimeNameObserver->updated($anime_name , $anime_name->anime_name , $clearAnimeName);
+       }
+       
+       $updatedAnime = AnimeName::where('id' , $anime_name->id)->update([
+            'anime_name' =>  $clearAnimeName,
+            'slug' => $slug,
+            'total_episode' => $validatedData['total_episode'],
+            'studio' => $validatedData['studio'],
+            'author' => $validatedData['author'],
+            'description' => $validatedData['description'],
+       ]);
+      
+
+       return back();
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AnimeName $animeName)
+    public function destroy(AnimeName $anime_name)
     {
         //
     }

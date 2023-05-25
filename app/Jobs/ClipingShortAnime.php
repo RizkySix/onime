@@ -19,8 +19,8 @@ class ClipingShortAnime implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
     private $short_data = [];
-    public $tries = 3;//menentukan berapa kali mail akan coba dikirim jika terjadi kegagalan
-    public $backoff = 10;//menentukan berapa lama waktu delay yang dibutuhkan untuk mengirin kembali mail saat gagal
+    public $tries = 3;//menentukan berapa kali job akan coba dikirim jika terjadi kegagalan
+    public $backoff = 10;//menentukan berapa lama waktu delay yang dibutuhkan untuk execute kembali job saat gagal
 
     /**
      * Create a new job instance.

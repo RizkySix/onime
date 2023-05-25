@@ -21,8 +21,14 @@ class UpdateAnimeNameRequest extends FormRequest
      */
     public function rules(): array
     {
+        
         return [
-            //
+            'anime_name' => 'required|string|min:3|unique:anime_names,anime_name,' . $this->route('anime_name')->id,
+            'total_episode' => 'required|integer',
+            'studio' => 'required|string|min:3',
+            'author' => 'required|string|min:3',
+            'description' => 'required|string|min:3',
+         
         ];
     }
 }

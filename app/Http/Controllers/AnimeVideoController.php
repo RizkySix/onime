@@ -45,13 +45,14 @@ class AnimeVideoController extends Controller
 
             //find data anime
             $findAnime = AnimeName::where('slug' , $request->anime_name_slug)->pluck('id' , 'anime_name');
-            $directory = $findAnime->keys()->first();
+            $animeName = $findAnime->keys()->first();
             $newAnime = $findAnime->values()->first();
 
-            if ($directory == null) {
+            if ($animeName == null) {
                 return back()->with('no-match', 'not match');
             }
 
+            $directory = 'F-' . $animeName;
 
             $ffprobe = FFProbe::create([
                 'ffmpeg.binaries' => env('FFMPEG_BINARIES'),
@@ -81,7 +82,7 @@ class AnimeVideoController extends Controller
             //call a job to make short video
             $short_data = [
                 'disk' => $disk,
-                'directory' => $directory,
+                'directory' => $animeName,
                 'video_name' => $video_name,
                 'anime_video_id' => $newAnimeVideo->id
             ];
@@ -103,6 +104,8 @@ class AnimeVideoController extends Controller
     public function extract_zip($zip , $directory , $newAnime)
     {
         $zipDetail = new ZipArchive;
+        $shortDirectory = $directory;
+        $directory = 'F-' . $directory;
 
         if($zipDetail->open($zip) === true ){
            $numFiles = $zipDetail->numFiles;
@@ -130,7 +133,7 @@ class AnimeVideoController extends Controller
                 DB::rollBack();
                 Storage::deleteDirectory('/tmp-dir');
                 Storage::deleteDirectory($directory);
-                Storage::disk('short_clip')->deleteDirectory('short-' . $directory);
+                Storage::disk('short_clip')->deleteDirectory('short-' . $shortDirectory);
                 return false; /* response(['wrong-format' => 'Format File Not Allowed']); */
             }
 
@@ -138,7 +141,7 @@ class AnimeVideoController extends Controller
                 DB::rollBack();
                 Storage::deleteDirectory('/tmp-dir');
                 Storage::deleteDirectory($directory);
-                Storage::disk('short_clip')->deleteDirectory('short-' . $directory);
+                Storage::disk('short_clip')->deleteDirectory('short-' . $shortDirectory);
                 return false; /* response(['wrong-format' => 'Format File Not Allowed']); */
             }
 
@@ -170,7 +173,7 @@ class AnimeVideoController extends Controller
            //call a job to make short video
            $short_data = [
             'disk' => $target,
-            'directory' => $directory,
+            'directory' => $shortDirectory,
             'video_name' => $video_name,
             'anime_video_id' => $newAnimeVideo->id
         ];
