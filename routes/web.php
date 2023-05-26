@@ -26,7 +26,12 @@ Route::middleware(['auth', 'otp_verified'])->group(function () {
     Route::post('/generate-token' , [DashboardController::class , 'generate_token'])->name('token-maker');
    Route::resource('/anime-name' , AnimeNameController::class);
    Route::post('/anime-name-zip' , [AnimeNameController::class , 'store_zip'])->name('anime-name.store.zip');
+   Route::post('/anime-restore/{slug}' , [AnimeNameController::class , 'restore'])->name('anime-restore');
+   Route::post('/anime-force-delete/{slug}' , [AnimeNameController::class , 'force_delete'])->name('anime-force-delete');
+ 
    Route::resource('/anime-videos' , AnimeVideoController::class);
+   Route::post('/anime-videos-restore/{id}' , [AnimeVideoController::class , 'restore'])->name('anime-videos-restore');
+   Route::post('/anime-videos-force-delete/{id}' , [AnimeVideoController::class , 'force_delete'])->name('anime-videos-force-delete');
 });
 
 

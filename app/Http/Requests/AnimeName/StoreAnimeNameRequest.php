@@ -3,6 +3,7 @@
 namespace App\Http\Requests\AnimeName;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAnimeNameRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class StoreAnimeNameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'anime_name' => 'required|string|min:3|unique:anime_names',
+            'anime_name' => 'required|string|min:3|unique:anime_names', //. Rule::unique('anime_names')->where('deleted_at' , null),
             'total_episode' => 'required|integer',
             'studio' => 'required|string|min:3',
             'author' => 'required|string|min:3',

@@ -20,6 +20,23 @@
     </form> <br><br>
 
     @foreach ($anime_name->anime_video as $item)
+        @if ($item->trashed())
+        <form action="/anime-videos-restore/{{ $item->id }}" method="POST">
+            @csrf
+            <input type="text" name="anime_eps" value="{{ $item->anime_eps }}" required style="width:360px;">
+            <x-primary-button class="mt-2">
+                {{ __('Restore') }}
+            </x-primary-button>
+        </form>
+
+        <form action="/anime-videos-force-delete/{{ $item->id }}" method="POST">
+            @csrf
+
+            <x-primary-button class="mt-2">
+                {{ __('Force Delete') }}
+            </x-primary-button>
+        </form>
+        @else
         <form action="/anime-videos/{{ $item->id }}" method="POST">
             @csrf
             @method('put')
@@ -34,5 +51,13 @@
             </x-primary-button>
 
         </form> <br>
+        <form action="/anime-videos/{{ $item->id }}" method="POST">
+            @csrf
+            @method('delete')
+            <x-primary-button class="mt-2">
+                {{ __('Delete') }}
+            </x-primary-button>
+        </form>
+        @endif
     @endforeach
  </x-guest-layout>

@@ -8,8 +8,8 @@ use App\Jobs\ClipingShortAnime;
 use App\Models\AnimeName;
 use App\Models\AnimeVideo;
 use App\Observers\AnimeVideoObserver;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
@@ -43,12 +43,12 @@ class AnimeVideoController extends Controller
         $video_detail = $request->file('video');
        
         if($video_detail){
-
+            
             //find data anime
             $findAnime = AnimeName::where('slug' , $request->anime_name_slug)->pluck('id' , 'anime_name');
             $animeName = $findAnime->keys()->first();
             $newAnime = $findAnime->values()->first();
-
+         
             if ($animeName == null) {
                 return back()->with('no-match', 'not match');
             }
@@ -73,7 +73,7 @@ class AnimeVideoController extends Controller
 
             //find for duplicate anime video name
             $findDuplicate = AnimeVideo::where('anime_eps' , $video_name)->pluck('anime_eps');
-
+            
             if($findDuplicate->values()->first() == null){
                 
                 $newAnimeVideo = AnimeVideo::create([
@@ -84,7 +84,7 @@ class AnimeVideoController extends Controller
                     'video_format' => $video_detail->getClientOriginalExtension(),
                     'video_url' => $url
                 ]);
-    
+           
                 //call a job to make short video
                 $short_data = [
                     'disk' => $disk,
@@ -95,7 +95,7 @@ class AnimeVideoController extends Controller
     
                 dispatch(new ClipingShortAnime($short_data));
             }
-            
+        
             return back();
           
         }else{
@@ -259,7 +259,7 @@ class AnimeVideoController extends Controller
         $format = $anime_video->video_format;
         $clearVidName = $this->remove_dot($validatedData['anime_eps'] , $format);
 
-        $findDuplicate = AnimeVideo::where('id' , '!=' , $anime_video->id)->where('anime_eps' , $clearVidName)->pluck('anime_eps');
+        $findDuplicate = AnimeVideo::withTrashed()->where('id' , '!=' , $anime_video->id)->where('anime_eps' , $clearVidName)->pluck('anime_eps');
 
         if($findDuplicate->values()->first() != null){
             return back()->with('duplicate-found' , 'Duplicate Name Found');
@@ -273,7 +273,7 @@ class AnimeVideoController extends Controller
             rename($oldPath, $newPath);
 
             $animeVideoObserver = new AnimeVideoObserver;
-            $animeVideoObserver->updated($anime_video , $allDataAnime->anime_name->anime_name , $clearVidName);
+            $animeVideoObserver->no_event_updated($anime_video , $allDataAnime->anime_name->anime_name , $clearVidName);
         }
 
 
@@ -292,6 +292,39 @@ class AnimeVideoController extends Controller
      */
     public function destroy(AnimeVideo $anime_video)
     {
-        //
+        AnimeVideo::destroy($anime_video->id);
+
+        return back();
+        
     }
+
+     /**
+     * Restore the specified resource from storage.
+     */
+
+     public function restore($id)
+     {
+        $softDeleted = AnimeVideo::onlyTrashed()->findOrFail($id);
+
+        if($softDeleted){
+            $softDeleted->restore();
+        }
+
+        return back();
+     }
+
+     /**
+     * Force delete the specified resource from storage.
+     */
+
+     public function force_delete($id)
+     {
+        $forceDelete = AnimeVideo::onlyTrashed()->findOrFail($id);
+
+        if($forceDelete){
+            $forceDelete->forceDelete();
+        }
+
+        return back();
+     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('short_name');
             $table->float('duration')->default(10);
             $table->string('short_url');
-            $table->timestamps(false);
+            $table->softDeletes();
         });
     }
 

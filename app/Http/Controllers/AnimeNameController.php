@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AnimeName\StoreAnimeNameRequest;
 use App\Http\Requests\AnimeName\UpdateAnimeNameRequest;
 use App\Models\AnimeName;
+use App\Models\AnimeVideo;
 use App\Observers\AnimeNameObserver;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,7 @@ class AnimeNameController extends Controller
     public function index()
     {
         return view('anime.all-anime-view' , [
-            'anime_name' => AnimeName::with(['anime_video:video_url,anime_name_id'])->get()
+            'anime_name' => AnimeName::withTrashed()->with(['anime_video:video_url,anime_name_id'])->get()
         ]);
     }
 
@@ -93,7 +94,7 @@ class AnimeNameController extends Controller
       $clearAnimeName = $this->remove_white_space($request->anime_name);
 
       //validasi anime name
-      $findCloneAnimeName = AnimeName::where('anime_name' , $clearAnimeName)->pluck('anime_name');
+      $findCloneAnimeName = AnimeName::withTrashed()->where('anime_name' , $clearAnimeName)->pluck('anime_name');
      
       if($findCloneAnimeName->values()->first()){
         if($from_zip_method !== null){
@@ -104,7 +105,6 @@ class AnimeNameController extends Controller
       }
 
       $slug = $this->slug_maker($clearAnimeName);
-
 
        $newAnime = AnimeName::create([
         'anime_name' => $clearAnimeName,
@@ -140,9 +140,9 @@ class AnimeNameController extends Controller
        $response = $this->store($request , "here is zip method");
         $clearAnimeName = $this->remove_white_space($request->anime_name);
 
-
         //call method extract zip
         if($request->file('zip') && $response !== 1){
+           
             $zipMethod = new AnimeVideoController;
            $resultExtract = $zipMethod->extract_zip($request->file('zip') , $clearAnimeName , $response->id);
 
@@ -174,7 +174,9 @@ class AnimeNameController extends Controller
     public function edit(AnimeName $anime_name)
     {
         return view('anime.edit-anime' , [
-            'anime_name' => $anime_name->load('anime_video:anime_eps,id,anime_name_id')
+            'anime_name' => $anime_name->load(['anime_video' => function ($query) {
+                $query->withTrashed()->select('anime_eps', 'id', 'anime_name_id' , 'deleted_at');
+            }])
         ]);
     }
 
@@ -197,7 +199,7 @@ class AnimeNameController extends Controller
             rename($oldPath, $newPath);
 
             $AnimeNameObserver = new AnimeNameObserver;
-            $AnimeNameObserver->updated($anime_name , $anime_name->anime_name , $clearAnimeName);
+            $AnimeNameObserver->no_event_updated($anime_name , $anime_name->anime_name , $clearAnimeName);
        }
        
        $updatedAnime = AnimeName::where('id' , $anime_name->id)->update([
@@ -219,6 +221,38 @@ class AnimeNameController extends Controller
      */
     public function destroy(AnimeName $anime_name)
     {
-        //
+        AnimeName::destroy($anime_name->id);
+
+        return back();
     }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore($slug)
+    {
+       $softDeleted = AnimeName::onlyTrashed()->where('slug' , $slug)->first();
+
+        if($softDeleted){
+            $softDeleted->restore();
+        }
+
+        return back();
+    }
+
+     /**
+     * Force delete the specified resource from storage.
+     */
+
+    public function force_delete($slug)
+    {
+        $forceDelete = AnimeName::onlyTrashed()->where('slug' , $slug)->first();
+
+        if($forceDelete){
+            $forceDelete->forceDelete();
+        }
+
+        return back();
+    }
+    
 }
