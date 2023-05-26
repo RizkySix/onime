@@ -20,6 +20,19 @@
     </form> <br><br>
 
     @foreach ($anime_name->anime_video as $item)
-        {{ $item->video_url }}
+        <form action="/anime-videos/{{ $item->id }}" method="POST">
+            @csrf
+            @method('put')
+         
+            <input type="text" name="anime_eps" value="{{ $item->anime_eps }}" required style="width:360px;">
+            @if (session('duplicate-found'))
+                {{ session('duplicate-found') }}
+                <br>
+            @endif
+            <x-primary-button class="mt-2">
+                {{ __('Perbarui') }}
+            </x-primary-button>
+
+        </form> <br>
     @endforeach
  </x-guest-layout>

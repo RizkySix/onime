@@ -22,7 +22,7 @@ class UpdateAnimeVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'anime_eps' => 'required|string|min:3'
         ];
     }
 }

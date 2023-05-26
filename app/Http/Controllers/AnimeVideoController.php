@@ -7,6 +7,7 @@ use App\Http\Requests\AnimeVideo\UpdateAnimeVideoRequest;
 use App\Jobs\ClipingShortAnime;
 use App\Models\AnimeName;
 use App\Models\AnimeVideo;
+use App\Observers\AnimeVideoObserver;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -69,28 +70,33 @@ class AnimeVideoController extends Controller
           $disk =  Storage::disk('public')->putFileAs($directory , $video_detail , $video_name);
             $url = Storage::disk('public')->url($directory . '/' . $video_name);
     
-         $newAnimeVideo = AnimeVideo::create([
-                'anime_name_id' => $newAnime,
-                'anime_eps' => $video_name,
-                'resolution' => $videoInfo->get('height'),
-                'duration' => $video_duration,
-                'video_format' => $video_detail->getClientOriginalExtension(),
-                'video_url' => $url
-            ]);
 
+            //find for duplicate anime video name
+            $findDuplicate = AnimeVideo::where('anime_eps' , $video_name)->pluck('anime_eps');
 
-            //call a job to make short video
-            $short_data = [
-                'disk' => $disk,
-                'directory' => $animeName,
-                'video_name' => $video_name,
-                'anime_video_id' => $newAnimeVideo->id
-            ];
-
-            dispatch(new ClipingShortAnime($short_data));
-
+            if($findDuplicate->values()->first() == null){
+                
+                $newAnimeVideo = AnimeVideo::create([
+                    'anime_name_id' => $newAnime,
+                    'anime_eps' => $video_name,
+                    'resolution' => $videoInfo->get('height'),
+                    'duration' => $video_duration,
+                    'video_format' => $video_detail->getClientOriginalExtension(),
+                    'video_url' => $url
+                ]);
+    
+                //call a job to make short video
+                $short_data = [
+                    'disk' => $disk,
+                    'directory' => $animeName,
+                    'video_name' => $video_name,
+                    'anime_video_id' => $newAnimeVideo->id
+                ];
+    
+                dispatch(new ClipingShortAnime($short_data));
+            }
+            
             return back();
-
           
         }else{
             return back()->with('no-match', 'not match');
@@ -198,7 +204,7 @@ class AnimeVideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AnimeVideo $animeVideo)
+    public function show(AnimeVideo $anime_video)
     {
         //
     }
@@ -206,23 +212,85 @@ class AnimeVideoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AnimeVideo $animeVideo)
+    public function edit(AnimeVideo $anime_video)
     {
         //
+    }
+
+     /**
+     * remove dot and slash.
+     */
+
+    public function remove_dot($animeVidName , $format)
+    {
+        //call remove space
+        $call = new AnimeNameController;
+        $clearVidName = $call->remove_white_space($animeVidName);
+     
+        $clearVidName = explode('.' , $clearVidName);
+        $loop = count($clearVidName);
+
+        for($i = 0; $i < $loop; $i++){
+
+            $lenStr = strlen($clearVidName[$i]);
+            if($clearVidName[$i] == null || $clearVidName[$i] == ' '){
+                unset($clearVidName[$i]);
+            }elseif($clearVidName[$i][$lenStr - 1] == ' '){
+                $clearVidName[$i] = str_replace(' ' , '' , $clearVidName[$i]);
+            }
+     
+        }
+
+        end($clearVidName) === $format ? : array_push($clearVidName , $format);
+        $result = implode('.' , $clearVidName);
+
+        return $result;
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAnimeVideoRequest $request, AnimeVideo $animeVideo)
+    public function update(UpdateAnimeVideoRequest $request, AnimeVideo $anime_video)
     {
-        //
+        $validatedData = $request->validated();
+        $allDataAnime = $anime_video->load('anime_name:id,anime_name');
+        
+        $format = $anime_video->video_format;
+        $clearVidName = $this->remove_dot($validatedData['anime_eps'] , $format);
+
+        $findDuplicate = AnimeVideo::where('id' , '!=' , $anime_video->id)->where('anime_eps' , $clearVidName)->pluck('anime_eps');
+
+        if($findDuplicate->values()->first() != null){
+            return back()->with('duplicate-found' , 'Duplicate Name Found');
+        }
+        
+          //call observer
+          if($anime_video->anime_eps !== $validatedData['anime_eps']){
+          
+            $oldPath = Storage::path('F-' . $allDataAnime->anime_name->anime_name . '/' . $anime_video->anime_eps);
+            $newPath = Storage::path('F-' . $allDataAnime->anime_name->anime_name . '/' . $clearVidName);
+            rename($oldPath, $newPath);
+
+            $animeVideoObserver = new AnimeVideoObserver;
+            $animeVideoObserver->updated($anime_video , $allDataAnime->anime_name->anime_name , $clearVidName);
+        }
+
+
+
+        DB::table('anime_videos')
+        ->where('id' , $anime_video->id)
+        ->update(['video_url' => DB::raw("REGEXP_REPLACE(video_url, '" . '/' . $anime_video->anime_eps . "', '" . 
+                                                                        '/' . $clearVidName . "')")
+         , 'anime_eps' => $clearVidName]);
+
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AnimeVideo $animeVideo)
+    public function destroy(AnimeVideo $anime_video)
     {
         //
     }

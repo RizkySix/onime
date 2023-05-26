@@ -89,7 +89,7 @@ class AnimeNameController extends Controller
     public function store(StoreAnimeNameRequest $request , $from_zip_method = null)
     {
     
-     //call slug maker
+     //call removed space and backslash
       $clearAnimeName = $this->remove_white_space($request->anime_name);
 
       //validasi anime name
@@ -174,7 +174,7 @@ class AnimeNameController extends Controller
     public function edit(AnimeName $anime_name)
     {
         return view('anime.edit-anime' , [
-            'anime_name' => $anime_name->load('anime_video:video_url,anime_name_id')
+            'anime_name' => $anime_name->load('anime_video:anime_eps,id,anime_name_id')
         ]);
     }
 
@@ -210,7 +210,7 @@ class AnimeNameController extends Controller
        ]);
       
 
-       return back();
+       return redirect()->route('anime-name.index');
 
     }
 
