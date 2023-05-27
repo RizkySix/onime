@@ -97,7 +97,7 @@ class AnimeNameController extends Controller
       $findCloneAnimeName = AnimeName::withTrashed()->where('anime_name' , $clearAnimeName)->pluck('anime_name');
      
       if($findCloneAnimeName->values()->first()){
-        if($from_zip_method !== null){
+        if($from_zip_method != null){
             return 1;
         }
 
@@ -117,11 +117,11 @@ class AnimeNameController extends Controller
 
        //make genre
        $genreStore = new GenreController;
-       $genreStore->store($request->genre);
+       $genreStore->store($request->genre , $newAnime);
 
        Storage::makeDirectory('F-' . $clearAnimeName);
 
-       if($from_zip_method !== null){
+       if($from_zip_method != null){
           return $newAnime;
        }
 

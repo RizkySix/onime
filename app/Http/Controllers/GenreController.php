@@ -54,20 +54,18 @@ class GenreController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store($allGenre)
+    public function store($allGenre , $newAnime)
     {
         $allGenre = $this->genreFilter($allGenre);
         $allGenre = explode(',' , $allGenre);
 
-        $getGenre = Genre::all()->pluck('genre_name');
+        $getGenre = Genre::pluck('genre_name');
         $availableGenre = $getGenre->values()->toArray();
 
         $loop = count($allGenre);
         $insertData = [];
         for($i = 0; $i < $loop; $i++){
-            if(array_search($allGenre[$i] , $availableGenre) !== false){
-                unset($allGenre[$i]);
-            }else{
+            if(array_search($allGenre[$i] , $availableGenre) === false){
                 $insertData[] = [
                     'genre_name' => $allGenre[$i],
                     'created_at' => Carbon::now(),
@@ -78,6 +76,12 @@ class GenreController extends Controller
      
         //create Genre 
         DB::table('genres')->insert($insertData);
+
+        //create relation
+        $getGenreId = Genre::whereIn('genre_name' , $allGenre)->pluck('id');
+        $genreId = $getGenreId->values()->toArray();
+       
+        $newAnime->genres()->attach($genreId);
     }
 
     /**

@@ -45,8 +45,9 @@
                         <input type="text" name="total_episode" placeholder="total eps">
                         <input type="text" name="studio" placeholder="studio">
                         <input type="text" name="author" placeholder="author"><br><br>
-                        <textarea name="description" id="" cols="30" rows="10"></textarea> <br>
-                        <br>
+                        <textarea name="description" id="" cols="30" rows="10"></textarea> <br><br>
+                        <input type="text" name="genre" placeholder="genre">
+                        
                       <input type="file" name="zip"><br><br>
                       @if (session('info'))
                           {{ session('info') }}
