@@ -115,6 +115,10 @@ class AnimeNameController extends Controller
         'description' => $request->description,
        ]);
 
+       //make genre
+       $genreStore = new GenreController;
+       $genreStore->store($request->genre);
+
        Storage::makeDirectory('F-' . $clearAnimeName);
 
        if($from_zip_method !== null){

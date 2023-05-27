@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnimeNameController;
 use App\Http\Controllers\AnimeVideoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,8 @@ Route::middleware(['auth', 'otp_verified'])->group(function () {
    Route::resource('/anime-videos' , AnimeVideoController::class);
    Route::post('/anime-videos-restore/{id}' , [AnimeVideoController::class , 'restore'])->name('anime-videos-restore');
    Route::post('/anime-videos-force-delete/{id}' , [AnimeVideoController::class , 'force_delete'])->name('anime-videos-force-delete');
+
+   Route::resource('/genre', GenreController::class);
 });
 
 

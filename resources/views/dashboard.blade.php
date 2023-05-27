@@ -26,6 +26,7 @@
                         <input type="text" name="studio" placeholder="studio">
                         <input type="text" name="author" placeholder="author"><br><br>
                         <textarea name="description" id="" cols="30" rows="10"></textarea> <br>
+                        <input type="text" name="genre" placeholder="genre">
                         <br>
                         @if (session('found-clone'))
                             foundid

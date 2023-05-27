@@ -85,6 +85,6 @@ class AnimeNameObserver
 
       //remove directory
       Storage::deleteDirectory('F-' . $animeName->anime_name);
-      Storage::deleteDirectory('short_anime_clip/' . 'short-' . $animeName->anime_name);
+      Storage::disk('short_clip')->deleteDirectory('short-' . $animeName->anime_name);
     }
 }

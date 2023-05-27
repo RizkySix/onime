@@ -70,6 +70,6 @@ class AnimeVideoObserver
 
         //remove file video
         Storage::delete('F-' . $animeVideo->anime_name->anime_name . '/' . $animeVideo->anime_eps);
-        Storage::delete('short_anime_clip/' . 'short-' . $animeVideo->anime_name->anime_name . '/' . 'clip-' . $animeVideo->anime_eps);
+        Storage::disk('short_clip')->delete('short-' . $animeVideo->anime_name->anime_name . '/' . 'clip-' . $animeVideo->anime_eps);
     }
 }
