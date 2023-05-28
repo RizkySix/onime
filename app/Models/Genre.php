@@ -10,5 +10,8 @@ class Genre extends Model
     use HasFactory;
     protected $guaraded = ['id'];
 
-
+    public function getRouteKeyName()
+    {
+        return 'genre_name';
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Genre\UpdateGenreRequest;
 use App\Models\Genre;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,7 +15,10 @@ class GenreController extends Controller
      */
     public function index()
     {
-        //
+        $allGenre = Genre::latest()->get();
+        return view('genre.view' , [
+            'genres' => $allGenre
+        ]);
     }
 
     /**
@@ -67,7 +71,7 @@ class GenreController extends Controller
         for($i = 0; $i < $loop; $i++){
             if(array_search($allGenre[$i] , $availableGenre) === false){
                 $insertData[] = [
-                    'genre_name' => $allGenre[$i],
+                    'genre_name' => ucwords(strtolower($allGenre[$i])),
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ];
@@ -103,9 +107,20 @@ class GenreController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Genre $genre)
+    public function update(UpdateGenreRequest $request, Genre $genre)
     {
-        //
+        $validatedData = $request->validated();
+
+        $newGenreName = $this->genreFilter($validatedData['genre_name']);
+        $findGenre = Genre::where('genre_name' , $newGenreName)->where('id' , '!=' , $genre->id)->pluck('genre_name');
+
+        if($findGenre->all() == null){
+            Genre::where('id' , $genre->id)->update(['genre_name' => ucwords(strtolower($newGenreName))]);
+        }else{
+            return back()->with('found-genre' , 'Duplicate Genre Name');
+        }
+
+        return back();
     }
 
     /**
