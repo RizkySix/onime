@@ -114,13 +114,9 @@ class GenreController extends Controller
         $newGenreName = $this->genreFilter($validatedData['genre_name']);
         $findGenre = Genre::where('genre_name' , $newGenreName)->where('id' , '!=' , $genre->id)->pluck('genre_name');
 
-        if($findGenre->all() == null){
-            Genre::where('id' , $genre->id)->update(['genre_name' => ucwords(strtolower($newGenreName))]);
-        }else{
-            return back()->with('found-genre' , 'Duplicate Genre Name');
-        }
-
-        return back();
+        $findGenre->all() == null ? ( Genre::where('id' , $genre->id)->update(['genre_name' => ucwords(strtolower($newGenreName))])) . ($info = 'Success Update') : $info = 'Duplicate Genre Name';
+       
+        return back()->with('found-genre' , $info);
     }
 
     /**
