@@ -276,8 +276,6 @@ class AnimeVideoController extends Controller
             $animeVideoObserver->no_event_updated($anime_video , $allDataAnime->anime_name->anime_name , $clearVidName);
         }
 
-
-
         DB::table('anime_videos')
         ->where('id' , $anime_video->id)
         ->update(['video_url' => DB::raw("REGEXP_REPLACE(video_url, '" . '/' . $anime_video->anime_eps . "', '" . 

@@ -13,6 +13,10 @@
         <input type="text" name="studio" value="{{ $anime_name->studio }}"><br>
         <input type="text" name="author" value="{{ $anime_name->author }}"><br>
         <input type="text" name="description" value="{{ $anime_name->description }}"><br>
+       @foreach ($anime_name->genres as $genre)
+       {{ $genre->genre_name }} <br>
+       <input type="text" name="genre[]" value="{{ $genre->id }}"><br>
+       @endforeach
 
         <x-primary-button class="mt-4">
             {{ __('Edit') }}

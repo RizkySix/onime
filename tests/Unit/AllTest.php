@@ -50,6 +50,7 @@ class AllTest extends TestCase
       $this->assertEquals('Aku,Cinta,Kamu' , $testFilter->genreFilter('Aku,Cinta,Kamu'));
       $this->assertEquals('Aku,Mau,Kamu' , $testFilter->genreFilter('     ,Aku, ../Mau,Ka41215125155mu'));
       $this->assertEquals('Aku,Pingin,Kamu' , $testFilter->genreFilter(',    ,     ,12,  ,     ,Aku, ../Pingin,Ka41215125155mu'));
+      $this->assertEquals('Aku Cumalaka,Pingin,Kamu' , $testFilter->genreFilter(',    ,     ,12,  ,     ,Aku  Cumalaka, ../Pingin,Ka41215125155mu'));
      }
 
     

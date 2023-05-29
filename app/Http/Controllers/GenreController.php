@@ -35,22 +35,21 @@ class GenreController extends Controller
 
      public function genreFilter($allGenre)
      {
-        $callRemoveSpace = new AnimeNameController;
-        $allGenre = $callRemoveSpace->remove_white_space($allGenre);
-        
+      
         $arrGenre = explode(',' , $allGenre);
         $loop = count($arrGenre);
         
         for($i = 0; $i < $loop; $i++){
-            $arrGenre[$i] = preg_replace('/\PL/u', '', $arrGenre[$i]);
+            $arrGenre[$i] = preg_replace('/[^\pL\s]/u', '', $arrGenre[$i]); //menghapus karakter selain huruf dan spasi
+            $arrGenre[$i] = preg_replace('/\s+/', ' ', trim($arrGenre[$i])); //menghapus spasi berlebih antar kata (menyisaskan satu spasi)
 
            if($arrGenre[$i] == ' ' || $arrGenre[$i] == null){
             unset($arrGenre[$i]);
            }
         }
-
+    
         $result = implode(',' , $arrGenre);
-        
+ 
         return $result;
         
      }

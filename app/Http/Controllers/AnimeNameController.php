@@ -19,7 +19,7 @@ class AnimeNameController extends Controller
     public function index()
     {
         return view('anime.all-anime-view' , [
-            'anime_name' => AnimeName::withTrashed()->with(['anime_video:video_url,anime_name_id'])->get()
+            'anime_name' => AnimeName::withTrashed()->with(['anime_video:video_url,anime_name_id' , 'genres:genre_name,id'])->get()
         ]);
     }
 
@@ -56,28 +56,26 @@ class AnimeNameController extends Controller
 
      public function remove_white_space($animeName)
      {
-        $arrAnime = explode(' ' , $animeName);
+        $arrAnime = explode(' ' , $animeName); 
         $loop = count($arrAnime);
 
         for($i = 0; $i < $loop; $i++){
             //hashmap
             $arrMap = [];
             $loopStr = strlen($arrAnime[$i]);
-            $plus = 1;
+           
             for($k = 0; $k < $loopStr; $k++){
-                $arrMap[$arrAnime[$i][$k]] = $plus;
-                $plus++;
+                !in_array($arrAnime[$i][$k] , array_keys($arrMap)) ? $arrMap[$arrAnime[$i][$k]] = 1 : $arrMap[$arrAnime[$i][$k]] += 1;
             }
-
+           
             if($arrAnime[$i] == null || count($arrMap) === 1 && isset($arrMap['/'])){
                 unset($arrAnime[$i]);
             }elseif(strpos($arrAnime[$i] , '/') !== false){
                 $arrAnime[$i] = str_replace('/', '', $arrAnime[$i]);
             }
 
-            
         }
-
+    
         $result = implode(' ' , $arrAnime);
         
         return $result;
@@ -180,6 +178,8 @@ class AnimeNameController extends Controller
         return view('anime.edit-anime' , [
             'anime_name' => $anime_name->load(['anime_video' => function ($query) {
                 $query->withTrashed()->select('anime_eps', 'id', 'anime_name_id' , 'deleted_at');
+            }, 'genres' => function ($query) {
+                $query->select('genre_name' , 'id');
             }])
         ]);
     }
@@ -190,7 +190,7 @@ class AnimeNameController extends Controller
     public function update(UpdateAnimeNameRequest $request, AnimeName $anime_name)
     {
        $validatedData = $request->validated();
-        
+
        $slug = $anime_name->slug;
        $clearAnimeName = $anime_name->anime_name;
        if($validatedData['anime_name'] != $anime_name->anime_name){
@@ -215,6 +215,9 @@ class AnimeNameController extends Controller
             'description' => $validatedData['description'],
        ]);
       
+       //update pivot table
+       $validatedData['genre'] = array_filter($validatedData['genre']);//kode disamping sementara sampai UI dibuat
+       $anime_name->genres()->sync($validatedData['genre']);
 
        return redirect()->route('anime-name.index');
 
