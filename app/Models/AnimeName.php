@@ -21,7 +21,7 @@ class AnimeName extends Model
 
     public function genres()
     {
-        return $this->belongsToMany(Genre::class , 'anime_genre' , 'genres_id' , 'anime_names_id');
+        return $this->belongsToMany(Genre::class , 'anime_genre' , 'anime_names_id' , 'genres_id');
     }
 
     public function getRouteKeyName()

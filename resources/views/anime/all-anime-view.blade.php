@@ -3,6 +3,10 @@
    <div class="mt-4">
     <h5>{{ $anime->anime_name }}</h5>
     <br>
+    <label for="">Genre</label><br>
+    @foreach ($anime->genres as $genre)
+        {{ $genre->genre_name }},
+    @endforeach <br>
     <label for="">Video</label> <br>
    @foreach ($anime->anime_video as $item)
        {{ $item->video_url }} <br>

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('anime_genre', function (Blueprint $table) {
+            $table->foreignId('anime_names_id');
            $table->foreignId('genres_id');
-           $table->foreignId('anime_names_id');
         });
     }
 

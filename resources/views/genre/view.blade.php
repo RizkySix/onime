@@ -3,7 +3,11 @@
      <form action="/genre/{{ $genre->genre_name }}" method="POST">
         @csrf
         @method('put')
-        <input type="text" name="genre_name" required value="{{ $genre->genre_name }}">
+        <input type="text" name="genre_name" required value="{{ $genre->genre_name }}"><br>
+        <label for="">Anime Name</label><br>
+        @foreach ($genre->anime_name as $anime)
+            {{ $anime->anime_name }},
+        @endforeach <br>
         @error('genre_name')
             {{ $message }}
         @enderror
