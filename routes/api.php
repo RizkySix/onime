@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AllAnimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/all-anime' , [AllAnimeController::class , 'get_all'])->name('api.all-anime');
 });
