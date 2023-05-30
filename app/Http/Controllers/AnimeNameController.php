@@ -19,7 +19,7 @@ class AnimeNameController extends Controller
     public function index()
     {
         return view('anime.all-anime-view' , [
-            'anime_name' => AnimeName::withTrashed()->with(['anime_video:video_url,anime_name_id' , 'genres:genre_name,id'])->get()
+            'anime_name' => AnimeName::withTrashed()->with(['anime_video:video_url,anime_name_id' , 'genres:genre_name'])->get()
         ]);
     }
 

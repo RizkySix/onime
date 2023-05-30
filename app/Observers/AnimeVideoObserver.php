@@ -31,7 +31,7 @@ class AnimeVideoObserver
 
      public function no_event_updated(AnimeVideo $animeVideo , $folder , $newName): void
      {
-          //for short video
+          //mengatur ulang url dan storage dari relasi AnimevVideo
           $shortOldPath = Storage::path('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $animeVideo->anime_eps);
           $shortNewPath = Storage::path('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $newName);
           rename($shortOldPath, $shortNewPath);

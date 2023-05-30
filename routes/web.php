@@ -35,6 +35,8 @@ Route::middleware(['auth', 'otp_verified'])->group(function () {
    Route::post('/anime-videos-force-delete/{id}' , [AnimeVideoController::class , 'force_delete'])->name('anime-videos-force-delete');
 
    Route::resource('/genre', GenreController::class);
+   Route::post('/genre-restore/{genre_name}' , [GenreController::class , 'restore'])->name('genre-restore');
+   Route::post('/genre-force-delete/{genre_name}' , [GenreController::class , 'force_delete'])->name('genre-force-delete');
 });
 
 

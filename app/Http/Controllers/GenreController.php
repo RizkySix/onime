@@ -15,7 +15,7 @@ class GenreController extends Controller
      */
     public function index()
     {
-        $allGenre = Genre::latest()->get();
+        $allGenre = Genre::withTrashed()->with(['anime_name:anime_name'])->latest()->get();
         return view('genre.view' , [
             'genres' => $allGenre
         ]);
@@ -62,13 +62,13 @@ class GenreController extends Controller
         $allGenre = $this->genreFilter($allGenre);
         $allGenre = explode(',' , $allGenre);
 
-        $getGenre = Genre::pluck('genre_name');
+        $getGenre = Genre::withTrashed()->pluck('genre_name');
         $availableGenre = $getGenre->values()->toArray();
 
         $loop = count($allGenre);
         $insertData = [];
         for($i = 0; $i < $loop; $i++){
-            if(array_search($allGenre[$i] , $availableGenre) === false){
+            if(array_search(ucwords(strtolower($allGenre[$i])) , $availableGenre) === false){
                 $insertData[] = [
                     'genre_name' => ucwords(strtolower($allGenre[$i])),
                     'created_at' => Carbon::now(),
@@ -81,7 +81,7 @@ class GenreController extends Controller
         DB::table('genres')->insert($insertData);
 
         //create relation
-        $getGenreId = Genre::whereIn('genre_name' , $allGenre)->pluck('id');
+        $getGenreId = Genre::withTrashed()->whereIn('genre_name' , $allGenre)->pluck('id');
         $genreId = $getGenreId->values()->toArray();
        
         $newAnime->genres()->attach($genreId);
@@ -123,6 +123,39 @@ class GenreController extends Controller
      */
     public function destroy(Genre $genre)
     {
-        //
+        Genre::destroy($genre->id);
+        
+        return back();
+    }
+
+      /**
+     * Restore the specified resource from storage.
+     */
+    public function restore($genre_name)
+    {
+        $softDeleted = Genre::onlyTrashed()->where('genre_name' , $genre_name)->first();
+
+        if($softDeleted){
+            $softDeleted->restore();
+        }
+
+        return back();
+    }
+
+     /**
+     * Restore the specified resource from storage.
+     */
+    public function force_delete($genre_name)
+    {
+        $forceDelete = Genre::onlyTrashed()->where('genre_name' , $genre_name)->first();
+
+        if($forceDelete){
+            $forceDelete->forceDelete();
+
+            //delete pivot table
+            $forceDelete->anime_name()->detach();
+        }
+
+        return back();
     }
 }
