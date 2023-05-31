@@ -7,6 +7,9 @@
             @if (session('no-match'))
                 {{ session('no-match') }}
             @endif
+            @if (session('success'))
+            {{ session('success') }}
+        @endif
        
         <x-primary-button>
             {{ __('Kirim Kode') }}

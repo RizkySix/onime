@@ -46,8 +46,8 @@ class AnimeVideoController extends Controller
             
             //find data anime
             $findAnime = AnimeName::where('slug' , $request->anime_name_slug)->pluck('id' , 'anime_name');
-            $animeName = $findAnime->keys()->first();
-            $newAnime = $findAnime->values()->first();
+            $animeName = $findAnime->keys()->first(); //anime_name
+            $newAnime = $findAnime->values()->first(); //id
          
             if ($animeName == null) {
                 return back()->with('no-match', 'not match');
@@ -66,16 +66,16 @@ class AnimeVideoController extends Controller
             
             $video_name = $video_detail->getClientOriginalName();
             $video_duration = floor($videoInfo->get('duration') / 60);
-            
-          $disk =  Storage::disk('public')->putFileAs($directory , $video_detail , $video_name);
-            $url = Storage::disk('public')->url($directory . '/' . $video_name);
-    
 
             //find for duplicate anime video name
-            $findDuplicate = AnimeVideo::where('anime_eps' , $video_name)->pluck('anime_eps');
+            $findDuplicate = AnimeVideo::where('anime_eps' , $video_name)->where('anime_name_id' , $newAnime)->pluck('anime_eps');
             
             if($findDuplicate->values()->first() == null){
-                
+
+                //save to storage
+                $disk =  Storage::disk('public')->putFileAs($directory , $video_detail , $video_name);
+                $url = Storage::disk('public')->url($directory . '/' . $video_name);
+        
                 $newAnimeVideo = AnimeVideo::create([
                     'anime_name_id' => $newAnime,
                     'anime_eps' => $video_name,
@@ -94,9 +94,12 @@ class AnimeVideoController extends Controller
                 ];
     
                 dispatch(new ClipingShortAnime($short_data));
+                return back()->with('success' , 'Video Added');
+            }else{
+                return back()->with('no-match' , 'Duplicate Video');
             }
         
-            return back();
+           
           
         }else{
             return back()->with('no-match', 'not match');
@@ -120,7 +123,6 @@ class AnimeVideoController extends Controller
            //5 = jika terjadi deadlock atau gagal akan dicoba kembali sebanyak 5x;
            DB::beginTransaction(5);
 
-           
            Storage::createDirectory('tmp-dir');
            $zipDetail->extractTo('storage/tmp-dir');
            
