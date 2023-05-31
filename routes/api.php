@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AllAnimeController;
+use App\Http\Controllers\Api\AllGenreController;
+use App\Http\Controllers\Api\AnimeListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,5 +18,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/all-anime' , [AllAnimeController::class , 'get_all'])->name('api.all-anime');
+    Route::get('/animes' , [AllAnimeController::class , 'get_all'])->name('api.all-anime');
+    Route::get('/animes/{anime_name}' , [AllAnimeController::class , 'show'])->name('api.show-anime');
+
+    Route::get('/genres' , [AllGenreController::class , 'all_genre'])->name('api.all-genre');
+    Route::get('/genres/{genre_name}' , [AllGenreController::class , 'show'])->name('api.show-genre');
+
+    Route::get('/anime-list' , [AnimeListController::class , 'anime_list'])->name('api.anime-list');
 });

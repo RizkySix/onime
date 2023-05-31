@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GetAllAnimeResource extends JsonResource
+class GenreAnimeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,8 +22,6 @@ class GetAllAnimeResource extends JsonResource
             'studio' => $this->studio,
             'author' => $this->author,
             'description' => $this->description,
-            'genre' => $this->genres->implode('genre_name' , ', '),
-            'anime_videos' => AnimeVideoResource::collection($this->when($request->anime_name , $this->whenLoaded('anime_video')))
         ];
     }
 }

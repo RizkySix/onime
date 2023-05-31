@@ -15,7 +15,7 @@ class AnimeVideoResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'anime_title' => $this->anime_eps,
+            'title' => $this->anime_eps,
             'resolution' => $this->resolution . 'p',
             'duration' => $this->duration . ' minute',
             'video_format' => $this->video_format ,
