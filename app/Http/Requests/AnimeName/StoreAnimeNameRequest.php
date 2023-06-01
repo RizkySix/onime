@@ -28,7 +28,9 @@ class StoreAnimeNameRequest extends FormRequest
             'studio' => 'required|string|min:3',
             'author' => 'required|string|min:3',
             'description' => 'required|string|min:3',
-            'genre' => 'required|string|min:3'
+            'released_date' => 'nullable|string|min:3',
+            'genre' => 'required|string|min:3',
+            'vip' => 'nullable'
          
         ];
     }

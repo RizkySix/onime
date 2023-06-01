@@ -87,9 +87,13 @@ class AnimeNameController extends Controller
      */
     public function store(StoreAnimeNameRequest $request , $from_zip_method = null)
     {
-    
+        
+        $validatedData = $request->validated();
+        $request->vip ? $vip = 1 : $vip = 0;
+        $request->released_date ? : $validatedData['released_date'] = 'Unknown';
+
      //call removed space and backslash
-      $clearAnimeName = $this->remove_white_space($request->anime_name);
+      $clearAnimeName = $this->remove_white_space($validatedData['anime_name']);
 
       //validasi anime name
       $findCloneAnimeName = AnimeName::withTrashed()->where('anime_name' , $clearAnimeName)->pluck('anime_name');
@@ -107,10 +111,12 @@ class AnimeNameController extends Controller
        $newAnime = AnimeName::create([
         'anime_name' => $clearAnimeName,
         'slug' => $slug,
-        'total_episode' => $request->total_episode,
-        'author' => $request->author,
-        'studio' => $request->studio,
-        'description' => $request->description,
+        'total_episode' => $validatedData['total_episode'],
+        'author' => $validatedData['author'],
+        'studio' => $validatedData['studio'],
+        'description' => $validatedData['description'],
+        'released_date' => $validatedData['released_date'],
+        'vip' => $vip
        ]);
 
        //make genre
@@ -134,13 +140,15 @@ class AnimeNameController extends Controller
 
      public function store_zip(StoreAnimeNameRequest $request)
      {
-        $validatedData = $request->validate([
+        $validate = $request->validate([
             'zip' => 'required|file|mimes:zip'
         ]);
+        
+        $validatedData = $request->validated();
 
         DB::beginTransaction();
        $response = $this->store($request , "here is zip method");
-        $clearAnimeName = $this->remove_white_space($request->anime_name);
+        $clearAnimeName = $this->remove_white_space($validatedData['anime_name']);
 
         //call method extract zip
         if($request->file('zip') && $response !== 1){
@@ -190,6 +198,8 @@ class AnimeNameController extends Controller
     public function update(UpdateAnimeNameRequest $request, AnimeName $anime_name)
     {
        $validatedData = $request->validated();
+       $request->vip ? $vip = 1 : $vip = 0;
+       $request->released_date ? : $validatedData['released_date'] = 'Unknown';
 
        $slug = $anime_name->slug;
        $clearAnimeName = $anime_name->anime_name;
@@ -213,6 +223,8 @@ class AnimeNameController extends Controller
             'studio' => $validatedData['studio'],
             'author' => $validatedData['author'],
             'description' => $validatedData['description'],
+            'released_date' => $validatedData['released_date'],
+            'vip' => $vip
        ]);
       
        //update pivot table

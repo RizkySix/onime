@@ -14,7 +14,9 @@ class AnimeListController extends Controller
      */
     public function anime_list(Request $request)
     {
-        $fetchAnime = AnimeName::select('anime_name' , 'slug');
+        $fetchAnime = AnimeName::select('anime_name' , 'slug')->when(!$request->user()->tokenCan('vip-token') , function($query) {
+            $query->where('vip' ,  false);
+        });
 
         //fetch anime yang dipublish 30 hari kebelakang
         $month = Carbon::now()->subDays(30);

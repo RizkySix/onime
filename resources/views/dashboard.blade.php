@@ -26,7 +26,9 @@
                         <input type="text" name="studio" placeholder="studio">
                         <input type="text" name="author" placeholder="author"><br><br>
                         <textarea name="description" id="" cols="30" rows="10"></textarea> <br>
+                        <input type="text" name="released_date" placeholder="Released Date"><br>
                         <input type="text" name="genre" placeholder="genre">
+                        <input type="checkbox" value="1" name="vip"> VIP
                         <br>
                         @if (session('found-clone'))
                             foundid
@@ -46,8 +48,9 @@
                         <input type="text" name="studio" placeholder="studio">
                         <input type="text" name="author" placeholder="author"><br><br>
                         <textarea name="description" id="" cols="30" rows="10"></textarea> <br><br>
+                        <input type="text" name="released_date" placeholder="Released Date"><br>
                         <input type="text" name="genre" placeholder="genre">
-                        
+                        <input type="checkbox" value="1" name="vip"> VIP <br>
                       <input type="file" name="zip"><br><br>
                       @if (session('info'))
                           {{ session('info') }}

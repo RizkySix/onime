@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AllAnimeController;
 use App\Http\Controllers\Api\AllGenreController;
+use App\Http\Controllers\Api\AllVipAnimeController;
 use App\Http\Controllers\Api\AnimeListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/genres/{genre_name}' , [AllGenreController::class , 'show'])->name('api.show-genre');
 
     Route::get('/anime-list' , [AnimeListController::class , 'anime_list'])->name('api.anime-list');
+
+    //vip
+    Route::get('/animes-vip' , [AllVipAnimeController::class , 'all_vip_anime'])->name('api.all-vip-anime');
 });

@@ -32,7 +32,7 @@ class AnimeNameObserver
 
      public function no_event_updated(AnimeName $animeName , $oldName , $newName): void
      {
-        //mengatur ulang url video dan storage relasi model AnimeNae
+        //mengatur ulang url video dan storage relasi model AnimeName
           DB::table('anime_videos')
              ->where('anime_name_id' , $animeName->id)
              ->update(['video_url' => DB::raw("REGEXP_REPLACE(video_url, '" . 'F-' . $oldName . "', '" . 'F-' . $newName . "')")

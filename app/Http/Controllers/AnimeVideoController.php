@@ -261,7 +261,11 @@ class AnimeVideoController extends Controller
         $format = $anime_video->video_format;
         $clearVidName = $this->remove_dot($validatedData['anime_eps'] , $format);
 
-        $findDuplicate = AnimeVideo::withTrashed()->where('id' , '!=' , $anime_video->id)->where('anime_eps' , $clearVidName)->pluck('anime_eps');
+        $findDuplicate = AnimeVideo::withTrashed()
+                                    ->where('id' , '!=' , $anime_video->id)
+                                    ->where('anime_name_id' , '=' , $anime_video->anime_name_id)
+                                    ->where('anime_eps' , $clearVidName)
+                                    ->pluck('anime_eps');
 
         if($findDuplicate->values()->first() != null){
             return back()->with('duplicate-found' , 'Duplicate Name Found');

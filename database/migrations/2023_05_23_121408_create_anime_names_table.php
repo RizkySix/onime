@@ -19,7 +19,9 @@ return new class extends Migration
             $table->float('rating')->default(0);
             $table->string('studio');
             $table->string('author');
+            $table->string('released_date')->default('Unknown');
             $table->text('description');
+            $table->boolean('vip')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

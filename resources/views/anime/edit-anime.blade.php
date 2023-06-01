@@ -13,6 +13,10 @@
         <input type="text" name="studio" value="{{ $anime_name->studio }}"><br>
         <input type="text" name="author" value="{{ $anime_name->author }}"><br>
         <input type="text" name="description" value="{{ $anime_name->description }}"><br>
+        <input type="text" name="released_date" value="{{ $anime_name->released_date }}"><br> <br>
+        <input type="checkbox" name="vip" value="1" @if ($anime_name->vip == true)
+            checked
+        @endif> <br>
        @foreach ($anime_name->genres as $genre)
        {{ $genre->genre_name }} <br>
        <input type="text" name="genre[]" value="{{ $genre->id }}"><br>
@@ -28,6 +32,7 @@
         <form action="/anime-videos-restore/{{ $item->id }}" method="POST">
             @csrf
             <input type="text" name="anime_eps" value="{{ $item->anime_eps }}" required style="width:360px;">
+           
             <x-primary-button class="mt-2">
                 {{ __('Restore') }}
             </x-primary-button>
@@ -46,6 +51,9 @@
             @method('put')
          
             <input type="text" name="anime_eps" value="{{ $item->anime_eps }}" required style="width:360px;">
+            @error('anime_eps')
+            {{ $message }}
+        @enderror
             @if (session('duplicate-found'))
                 {{ session('duplicate-found') }}
                 <br>

@@ -26,9 +26,13 @@ class AllGenreController extends Controller
      /**
      * Show specific genre anime and their anaimes to api response.
      */
-    public function show(Genre $genre_name)
+    public function show(Genre $genre_name , Request $request)
     {
-        $fetchGenre = $genre_name->load(['anime_name:anime_name,slug,rating,total_episode,studio,author,description']);
+        $fetchGenre = $genre_name->load(['anime_name' => function($query) use($request) {
+            $query->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')->when(!$request->user()->tokenCan('vip-token') , function($subQuery) {
+                $subQuery->where('vip' , false);
+            });
+        }]);
 
         return response()->json([
             'status' => true,

@@ -7,6 +7,7 @@ use App\Http\Resources\GetAllAnimeResource;
 use App\Models\AnimeName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AllAnimeController extends Controller
 {
@@ -18,7 +19,8 @@ class AllAnimeController extends Controller
 
         //query awal
         $fetchAnime = AnimeName::with(['genres:genre_name'])
-        ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description')
+        ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
+        ->where('vip' , false)
         ->when($request->rating == true , function($query) {
             $query->orderBy('rating' , 'DESC');
         }, function($query) {
@@ -62,8 +64,13 @@ class AllAnimeController extends Controller
      /**
      * Show single anime by retrivieng slug and send to api response.
      */
-     public function show(AnimeName $anime_name)
+     public function show(AnimeName $anime_name , Request $request)
      {
+        //menghalangi jika token bukan vip
+        if($anime_name->vip == true && !$request->user()->tokenCan('vip-token')){
+            throw new NotFoundHttpException();
+        }
+
         //query awal
         $anime_name->load(['anime_video' => function($query){
             $query->with(['anime_short' => function($shortQuery){
@@ -77,8 +84,10 @@ class AllAnimeController extends Controller
             $genreId[] = $genre->id;
         }
 
-       $relatedAnimes = AnimeName::with('genres:genre_name')
-       ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description')->whereHas('genres' , function($query) use($genreId , $anime_name) {
+       $relatedAnimes = AnimeName::with('genres:genre_name')->when(!$request->user()->tokenCan('vip-token') , function($query){
+        $query->where('vip' , false);
+       })
+       ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' ,'vip')->whereHas('genres' , function($query) use($genreId , $anime_name) {
             $query->whereIn('genres_id' , $genreId)->where('anime_names_id' , '!=' , $anime_name->id);
        })
        ->take(5)
