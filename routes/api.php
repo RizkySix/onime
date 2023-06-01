@@ -29,4 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //vip
     Route::get('/animes-vip' , [AllVipAnimeController::class , 'all_vip_anime'])->name('api.all-vip-anime');
+
+    //rating
+    Route::put('/animes/{anime_name}/rating' , [AllAnimeController::class , 'rating'])->name('api.rating-anime');
 });

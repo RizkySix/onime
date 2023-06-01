@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('anime_name')->unique();
             $table->string('slug')->unique();
             $table->integer('total_episode');
-            $table->float('rating')->default(0);
             $table->string('studio');
             $table->string('author');
             $table->string('released_date')->default('Unknown');

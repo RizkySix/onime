@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GetAllAnimeResource;
 use App\Models\AnimeName;
+use App\Models\AnimeRating;
 use Illuminate\Http\Request;
 
 class AllVipAnimeController extends Controller
@@ -18,11 +19,11 @@ class AllVipAnimeController extends Controller
         if($request->user()->tokenCan('vip-token')){
 
          //query awal
-         $fetchAnime = AnimeName::with(['genres:genre_name'])
-         ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
+         $fetchAnime = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])
+         ->select('id', 'anime_name' , 'slug' , 'total_episode'  , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
          ->where('vip' , true)
          ->when($request->rating == true , function($query) {
-             $query->orderBy('rating' , 'DESC');
+             $query->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
          }, function($query) {
              $query->latest();
          });

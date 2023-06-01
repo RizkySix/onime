@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GetAllAnimeResource;
 use App\Models\AnimeName;
+use App\Models\AnimeRating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,11 +19,11 @@ class AllAnimeController extends Controller
     {
 
         //query awal
-        $fetchAnime = AnimeName::with(['genres:genre_name'])
-        ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
+        $fetchAnime = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])
+        ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
         ->where('vip' , false)
         ->when($request->rating == true , function($query) {
-            $query->orderBy('rating' , 'DESC');
+            $query->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
         }, function($query) {
             $query->latest();
         });
@@ -76,7 +77,7 @@ class AllAnimeController extends Controller
             $query->with(['anime_short' => function($shortQuery){
                 $shortQuery->select('anime_video_id' , 'short_name' , 'duration' , 'short_url');
             }])->select('anime_name_id' , 'anime_eps' , 'resolution' , 'duration' , 'video_format' , 'video_url' , 'id');
-        } , 'genres:genre_name,id']);
+        } , 'genres:genre_name,id' , 'rating:rating,anime_name_id']);
 
         //membuat rekomendasi anime sejenis
         $genreId = [];
@@ -84,10 +85,10 @@ class AllAnimeController extends Controller
             $genreId[] = $genre->id;
         }
 
-       $relatedAnimes = AnimeName::with('genres:genre_name')->when(!$request->user()->tokenCan('vip-token') , function($query){
+       $relatedAnimes = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])->when(!$request->user()->tokenCan('vip-token') , function($query){
         $query->where('vip' , false);
        })
-       ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' ,'vip')->whereHas('genres' , function($query) use($genreId , $anime_name) {
+       ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' ,'vip')->whereHas('genres' , function($query) use($genreId , $anime_name) {
             $query->whereIn('genres_id' , $genreId)->where('anime_names_id' , '!=' , $anime_name->id);
        })
        ->take(5)
@@ -99,6 +100,65 @@ class AllAnimeController extends Controller
             'anime' => GetAllAnimeResource::make($anime_name),
             'related_animes' => GetAllAnimeResource::collection($relatedAnimes),
         ] , 200);
+
+     }
+
+     /**
+     * Client participation by staring anime by retrivieng slug and send to api response.
+     */
+     public function rating(AnimeName $anime_name , Request $request)
+     {
+          //menghalangi jika token bukan vip
+          if($anime_name->vip == true && !$request->user()->tokenCan('vip-token')){
+            throw new NotFoundHttpException();
+        }
+
+
+        try {
+                $validedData = $request->validate([
+                    'point' => 'required|numeric|min:1|max:10'
+                ]);
+
+            DB::beginTransaction();
+            $getRating = $anime_name->load(['rating' => function($query) {
+                $query->lockForUpdate();
+            }]);
+            $point = $getRating->rating->point;
+            $participan = $getRating->rating->participan;
+            $rating = $getRating->rating->rating;
+
+            if($validedData['point'] != null){
+                $point += $validedData['point'];
+                $participan += 1;
+
+                $rating = $point / $participan;
+                $rating = sprintf('%.1f', $rating);
+
+                AnimeRating::where('anime_name_id' , $anime_name->id)->update([
+                    'point' => $point,
+                    'participan' => $participan,
+                    'rating' => $rating
+                ]);
+                DB::commit();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Thanks your participation with ' . $validedData['point'] . ' point'
+            ], 200);
+            }
+
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Something wrong with your request'
+            ], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+     
 
      }
 }

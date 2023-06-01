@@ -19,12 +19,13 @@ class GenreAnimeResource extends JsonResource
             'anime_name' => $this->anime_name,
             'slug' => $this->slug,
             'total_episode' => $this->total_episode,
-            'rating' => $this->rating,
+            'rating' => $this->rating->rating,
             'released_date' => $this->released_date,
             'studio' => $this->studio,
             'author' => $this->author,
             'vip' => $vip,
             'description' => $this->description,
+            'genres' => $this->genres->implode('genre_name' , ', ')
         ];
     }
 }

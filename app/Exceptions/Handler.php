@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -34,6 +35,13 @@ class Handler extends ExceptionHandler
                    'status' => false,
                    'message' => 'Anime not found',
               ], 404);
+        });
+
+        $this->renderable(function (MethodNotAllowedHttpException $e) {
+            return response()->json([
+                   'status' => false,
+                   'message' => 'Bad http method request',
+              ], 400);
         });
         
     }

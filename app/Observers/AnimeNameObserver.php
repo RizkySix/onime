@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\AnimeName;
+use App\Models\AnimeRating;
 use App\Models\AnimeVideo;
 use App\Models\AnimeVideoShort;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,8 @@ class AnimeNameObserver
      */
     public function created(AnimeName $animeName): void
     {
-        //
+        //buat rating untuk anim baru
+        AnimeRating::create(['anime_name_id' => $animeName->id]);
     }
 
     /**

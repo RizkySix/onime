@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GenreResource;
+use App\Models\AnimeRating;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class AllGenreController extends Controller
      */
     public function all_genre()
     {
-        $fetchGenre = Genre::select('genre_name')->withCount('anime_name as anime_result')->orderBy('anime_result' , 'desc')->get();
+        $fetchGenre = Genre::select('genre_name')->withCount('anime_name as anime_result')->orderBy('anime_result' , 'DESC')->get();
 
         return response()->json([
             'status' => true,
@@ -29,8 +30,12 @@ class AllGenreController extends Controller
     public function show(Genre $genre_name , Request $request)
     {
         $fetchGenre = $genre_name->load(['anime_name' => function($query) use($request) {
-            $query->select('id', 'anime_name' , 'slug' , 'total_episode' , 'rating' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')->when(!$request->user()->tokenCan('vip-token') , function($subQuery) {
+            $query->with(['rating:rating,anime_name_id'])->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
+            ->when(!$request->user()->tokenCan('vip-token') , function($subQuery) {
                 $subQuery->where('vip' , false);
+            })->when($request->rating == true , function($queryRating) {
+                $queryRating->orderByDesc(AnimeRating::select('rating')
+                            ->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
             });
         }]);
 
