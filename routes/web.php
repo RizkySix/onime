@@ -4,6 +4,7 @@ use App\Http\Controllers\AnimeNameController;
 use App\Http\Controllers\AnimeVideoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\PricingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,10 @@ Route::middleware(['auth', 'otp_verified'])->group(function () {
    Route::resource('/genre', GenreController::class);
    Route::post('/genre-restore/{genre_name}' , [GenreController::class , 'restore'])->name('genre-restore');
    Route::post('/genre-force-delete/{genre_name}' , [GenreController::class , 'force_delete'])->name('genre-force-delete');
+
+   Route::resource('/pricing', PricingController::class);
+   Route::post('/pricing-restore/{pricing_name}', [PricingController::class , 'restore'])->name('pricing.restore');
+   Route::post('/pricing-force-delete/{pricing_name}', [PricingController::class , 'force_delete'])->name('pricing.force-delete');
 });
 
 

@@ -89,6 +89,9 @@ class AnimeNameObserver
         //delete pivot table
         $animeName->genres()->detach();
 
+        //delete rating
+        $animeName->rating()->delete();
+
       //remove directory
       Storage::deleteDirectory('F-' . $animeName->anime_name);
       Storage::disk('short_clip')->deleteDirectory('short-' . $animeName->anime_name);
