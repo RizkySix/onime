@@ -5,6 +5,7 @@ use App\Http\Controllers\AnimeVideoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PricingController;
+use App\Http\Controllers\PricingOrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,9 @@ Route::middleware(['auth', 'otp_verified'])->group(function () {
    Route::resource('/pricing', PricingController::class);
    Route::post('/pricing-restore/{pricing_name}', [PricingController::class , 'restore'])->name('pricing.restore');
    Route::post('/pricing-force-delete/{pricing_name}', [PricingController::class , 'force_delete'])->name('pricing.force-delete');
+
+   //Payment
+   Route::get('/transaction-view/{pricing_name}' , [PricingOrderController::class , 'transaction_view'])->name('transaction-view');
 });
 
 

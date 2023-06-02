@@ -24,6 +24,7 @@
                 </form>
                 </form>
 
+               
             @else
             <form action="/pricing/{{ $pricing->pricing_name }}" method="POST">
                 @csrf
@@ -31,7 +32,14 @@
                 <x-primary-button>
                     {{ __('Delete') }}
                 </x-primary-button>
+            </form> <br>
+
+            <form action="/transaction-view/{{ $pricing->pricing_name }}" method="GET">
+                <x-primary-button>
+                    {{ __('Buy') }}
+                </x-primary-button>
             </form>
+
 
             @endif
 
