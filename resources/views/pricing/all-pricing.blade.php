@@ -39,7 +39,9 @@
                     {{ __('Buy') }}
                 </x-primary-button>
             </form>
-
+            @if (session('payment-success'))
+                {{ session('payment-success') }}
+            @endif
 
             @endif
 

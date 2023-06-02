@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('pricing_orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
+            $table->string('order_id')->unique();
+            $table->string('payment_type');
+            $table->string('transaction_status');
+            $table->string('pricing_type');
+            $table->float('pricing_price');
+            $table->float('gross_amount');
+            $table->string('payment_number');
+            $table->dateTime('transaction_time');
             $table->timestamps();
         });
     }

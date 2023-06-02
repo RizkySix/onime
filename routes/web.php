@@ -46,6 +46,7 @@ Route::middleware(['auth', 'otp_verified'])->group(function () {
 
    //Payment
    Route::get('/transaction-view/{pricing_name}' , [PricingOrderController::class , 'transaction_view'])->name('transaction-view');
+   Route::post('/transaction/{pricing_name}' , [PricingOrderController::class , 'transaction'])->name('transaction');
 });
 
 

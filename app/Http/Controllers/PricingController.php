@@ -13,7 +13,7 @@ class PricingController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    { 
         $pricings = Pricing::withTrashed()->select('pricing_name' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->get();
         return view('pricing.all-pricing' , [
             'pricings' => $pricings
