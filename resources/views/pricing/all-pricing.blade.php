@@ -1,4 +1,11 @@
 <x-guest-layout>
+    @if (auth()->user()->order)
+        {{ auth()->user()->order->id }} <br>
+        {{ auth()->user()->order->order_id }} <br>
+        {{ auth()->user()->order->transaction_status }} <br>
+        {{ auth()->user()->order->gross_amount }} <br><br>
+    @endif
+
     @foreach ($pricings as $pricing)
         <div>
             {{ $pricing->pricing_name }} <br>
@@ -10,7 +17,7 @@
             <label for="">Diskon price : {{ $discountPrice }}</label> <br>
             <a href="/pricing/{{ $pricing->pricing_name }}/edit">Edit</a><br>
             @if ($pricing->trashed())
-                <form action="/pricing-restore/{{ $pricing->pricing_name }}" method="POST">
+                <form action="/pricing-restore/{{ $pricing->pricing_name }}" method="POST" >
                     @csrf
                     <x-primary-button>
                         {{ __('Restore') }}

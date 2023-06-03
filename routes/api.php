@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AllAnimeController;
 use App\Http\Controllers\Api\AllGenreController;
 use App\Http\Controllers\Api\AllVipAnimeController;
 use App\Http\Controllers\Api\AnimeListController;
+use App\Http\Controllers\PricingOrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,3 +34,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //rating
     Route::put('/animes/{anime_name}/rating' , [AllAnimeController::class , 'rating'])->name('api.rating-anime');
 });
+
+//webhook for midtrans
+    Route::post('/handling-payment-midtrans/webhook' , [PricingOrderController::class , 'webhook'])->name('api.webhook');
