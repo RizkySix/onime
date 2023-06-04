@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('payment_type');
             $table->string('transaction_status');
             $table->string('pricing_type');
+            $table->integer('pricing_duration_in_days');
             $table->float('pricing_price');
             $table->float('gross_amount');
             $table->string('payment_number');

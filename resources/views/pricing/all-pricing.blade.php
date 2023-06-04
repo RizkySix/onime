@@ -4,6 +4,19 @@
         {{ auth()->user()->order->order_id }} <br>
         {{ auth()->user()->order->transaction_status }} <br>
         {{ auth()->user()->order->gross_amount }} <br><br>
+
+        @if (session('status'))
+            {{ session('status') }}
+        @endif
+
+        @if (auth()->user()->order->transaction_status == 'pending')   
+        <form action="/cancel-order/{{ auth()->user()->order->order_id }}" method="POST">
+            @csrf
+            <x-primary-button>
+                {{ __('Cancel') }}
+            </x-primary-button>
+        </form><br><br>
+        @endif
     @endif
 
     @foreach ($pricings as $pricing)

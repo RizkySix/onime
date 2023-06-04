@@ -118,6 +118,7 @@ class PricingOrderController extends Controller
             'payment_type' => $vaPayment,
             'transaction_status' => $data_order['transaction_status'],
             'pricing_type' => $pricing_name->pricing_name,
+            'pricing_duration_in_days' => $pricing_name->duration,
             'pricing_price' => $pricing_name->price,
             'gross_amount' => $data_order['gross_amount'],
             'payment_number' => $vaNumber,
@@ -131,6 +132,37 @@ class PricingOrderController extends Controller
        
     }
 
+      /**
+     * Midtrans api cancel order.
+     */
+     public function cancel_order(PricingOrder $pricing_order)
+     {  
+        if($pricing_order->transaction_status != 'pending'){
+
+            return back()->with('status' , 'Failed to cancel the order, still willing ? please wait until the order expires'  );
+        }
+
+        //canceling order to midtrans dashboard
+        $response = Http::withBasicAuth(env('MIDTRANS_SERVERKEY') , '')
+        ->withHeaders([
+            'accept' => 'application/json'
+        ])
+        ->post('https://api.sandbox.midtrans.com/v2/' . $pricing_order->order_id . '/cancel');
+        
+        $arrResponse = json_decode($response , true);
+    
+        $status_code = ['401' , '412' , '404'];
+        if(in_array($arrResponse['status_code'] , $status_code)){
+            $message = 'Failed to cancel the order, still willing ? please wait until the order expires'  ;
+        }
+        
+        if($arrResponse['status_code'] == '200'){
+            $message = 'Success, order canceled'  ;
+        }
+
+        return back()->with('status' , $message);
+      
+    }
       /**
      * Midtrans api webhook.
      */
@@ -153,23 +185,38 @@ class PricingOrderController extends Controller
 
         //perbarui status pada database
         if($request->transaction_status == 'settlement' || $request->transaction_status == 'capture'){
-    
-           $order->transaction_status = $request->transaction_status;
-           $order->save();
-         
-            //update user
-            User::where('id' , $order->user_id)->update(['vip' => true]);
+            if($order->transaction_status  == 'pending'){
+                $order->transaction_status = $request->transaction_status;
+                $order->save();
+            
+                 //update user
+                 User::where('id' , $order->user_id)->update(['vip' => true , 'vip_duration' => Carbon::now()->addDays($order->pricing_duration_in_days)]);
+               
+                $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
+            }
           
-           $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
         }
 
+        //hapus transaksi jika expired atau deny
         if($request->transaction_status == 'expire' || $request->transaction_status == 'deny'){
             $order->transaction_status == 'settlement' || $order->transaction_status == 'capture' ? :  $order->delete();
             
-            //cancel order to midtrans dashboard
-            Http::withBasicAuth(env('MIDTRANS_SERVERKEY') , '')->post('https://api.sandbox.midtrans.com/v2/{$order->order_id}/expire');
+            //expiring order to midtrans dashboard
+           Http::withBasicAuth(env('MIDTRANS_SERVERKEY') , '')
+        ->withHeaders([
+            'accept' => 'application/json'
+        ])
+        ->post('https://api.sandbox.midtrans.com/v2/' . $order->order_id . '/expire');
 
             $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
+         }
+
+         //perbarui status transaksi jika di cancel
+         if($request->transaction_status == 'cancel' && $order->transaction_status == 'pending'){
+            $order->transaction_status = $request->transaction_status;
+            $order->save();
+            DB::commit();
+            
          }
 
      } catch (\Exception $e) {
