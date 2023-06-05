@@ -1,23 +1,45 @@
 <x-guest-layout>
-    @if (auth()->user()->order)
-        {{ auth()->user()->order->id }} <br>
-        {{ auth()->user()->order->order_id }} <br>
-        {{ auth()->user()->order->transaction_status }} <br>
-        {{ auth()->user()->order->gross_amount }} <br><br>
+    @if ($user_order)
+      @foreach ($user_order as $order)
+      {{ $order->id }} <br>
+      {{ $order->order_id }} <br>
+      {{ $order->transaction_status }} <br>
+      {{ $order->gross_amount }} <br><br>
 
-        @if (session('status'))
-            {{ session('status') }}
-        @endif
+      @if (session('status'))
+          {{ session('status') }}
+      @endif
 
-        @if (auth()->user()->order->transaction_status == 'pending')   
-        <form action="/cancel-order/{{ auth()->user()->order->order_id }}" method="POST">
-            @csrf
-            <x-primary-button>
-                {{ __('Cancel') }}
-            </x-primary-button>
-        </form><br><br>
-        @endif
+      @if ($order->transaction_status == 'pending')   
+      <form action="/cancel-order/{{ $order->order_id }}" method="POST">
+          @csrf
+          <x-primary-button>
+              {{ __('Cancel') }}
+          </x-primary-button>
+      </form>
+      <form action="/change-payment-method/{{ $order->order_id }}/edit" method="GET">
+        <x-primary-button>
+            {{ __('Change payment') }}
+        </x-primary-button>
+        </form>
+      <br><br>
+      @endif
+
+      @if ($order->transaction_status == 'expire' && $order->transaction_time < \Carbon\Carbon::now())   
+      <form action="/change-payment-method/{{ $order->order_id }}/edit" method="GET">
+        <x-primary-button>
+            {{ __('Change payment') }}
+        </x-primary-button>
+        </form><br>
+        <p>Jika tidak segera memilih metode pembayaran, pesanan akan dibatalkan secara otomatis dalam 24 jam</p>
+      <br><br>
+     
     @endif
+
+      @endforeach
+    @endif
+
+  
 
     @foreach ($pricings as $pricing)
         <div>

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('pricing_duration_in_days');
             $table->float('pricing_price');
             $table->float('gross_amount');
+            $table->integer('pricing_discount');
             $table->string('payment_number');
             $table->dateTime('transaction_time');
             $table->timestamps();
