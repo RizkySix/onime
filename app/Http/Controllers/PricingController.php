@@ -14,7 +14,7 @@ class PricingController extends Controller
      */
     public function index()
     { 
-        $pricings = Pricing::withTrashed()->select('pricing_name' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->get();
+        $pricings = Pricing::withTrashed()->select('pricing_name' , 'vip_power' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->get();
         return view('pricing.all-pricing' , [
             'pricings' => $pricings,
             'user_order' => auth()->user()->order

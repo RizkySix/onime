@@ -16,4 +16,9 @@ class Pricing extends Model
     {
         return 'pricing_name';
     }
+
+    public function vip()
+    {
+        return $this->hasMany(VipUser::class);
+    }
 }

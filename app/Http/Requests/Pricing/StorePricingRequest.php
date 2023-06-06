@@ -23,6 +23,7 @@ class StorePricingRequest extends FormRequest
     {
         return [
             'pricing_name' => 'required|string|min:2|unique:pricings',
+            'vip_power' => 'required|string',
             'price' => 'required|numeric',
             'discount' => 'nullable|integer',
             'duration' => 'required|integer',

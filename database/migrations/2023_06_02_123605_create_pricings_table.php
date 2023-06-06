@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pricings', function (Blueprint $table) {
             $table->id();
             $table->string('pricing_name')->unique();
+            $table->string('vip_power')->default('NORMAL');
             $table->float('price');
             $table->integer('discount')->nullable()->default(0);
             $table->integer('duration');

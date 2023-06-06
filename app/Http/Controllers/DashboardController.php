@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pricing;
 use App\Models\User;
 use Illuminate\Http\Request;
 use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
@@ -25,14 +26,33 @@ class DashboardController extends Controller
       $user->tokens()->delete();
 
       $tokenName = 'onime-api-' . $user->name;
-      $ability = $user->vip == false ? ['normal-token'] : ['vip-token'];
+   
+      if($user->vip->all() == null){
+         $token = $user->createToken($tokenName , ['normal-token'])->plainTextToken;
+      }else{
+         
+         //cari id pricing dan dapatkan power darii pricing vip
+         $vip_user = $user->vip->pluck('pricing_id')->toArray();
+         $findPricing = Pricing::withTrashed()->whereIn('id' , $vip_user)->pluck('vip_power');
 
-      $token = $user->createToken($tokenName , $ability)->plainTextToken;
+         $abilities = [];
+         foreach($findPricing as $vip_power){
+            //membuat abilities untuk vip token berdasarkan power pricing user
+            if($vip_power == 'NORMAL'){
+              in_array('vip-token' , $abilities) ? : $abilities[] = 'vip-token';
+            }elseif($vip_power == 'SUPER'){
+               in_array('super-vip-token' , $abilities) ? : $abilities[] = 'super-vip-token';
+            }
+         }
 
+         $token = $user->createToken($tokenName , $abilities)->plainTextToken;
+
+      }
+      
       $user->token = $token;
       $user->save();
       
-      return redirect('dashboard');
+     return redirect('dashboard');
    }
 
    

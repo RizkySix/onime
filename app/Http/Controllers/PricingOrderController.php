@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pricing;
 use App\Models\PricingOrder;
 use App\Models\User;
+use App\Models\VipUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -127,7 +128,7 @@ class PricingOrderController extends Controller
          
           DB::beginTransaction();
          
-          PricingOrder::create([
+        $pricing_order =  PricingOrder::create([
             'user_id' => auth()->user()->id,
             'order_id' => $data_order['order_id'],
             'payment_type' => $vaPayment,
@@ -140,6 +141,10 @@ class PricingOrderController extends Controller
             'payment_number' => $vaNumber,
             'transaction_time' => $data_order['transaction_time'],
           ]);
+
+          if($data_order['transaction_status'] == 'settlement' || $data_order['transaction_status'] == 'capture'){
+            $this->vip_user($pricing_order);
+          }
 
           $realPrice == $data_order['gross_amount'] ? (DB::commit()) . ($message = 'Payment Success') : (DB::rollBack()) . ($message = 'No Match Gross Amount');
 
@@ -194,6 +199,34 @@ class PricingOrderController extends Controller
         return $arrResponse;
     }
 
+
+     /**
+     * Make VIP for user.
+     */
+    public function vip_user(PricingOrder $pricing_order) : void
+    {
+         //get pricing ID 
+         $getPricingId = Pricing::where('pricing_name' , $pricing_order->pricing_type)->pluck('id');
+
+         //cek apakah data vip yang sama sudah ada 
+        $findVip = VipUser::where('user_id' , $pricing_order->user_id)
+                              ->where('pricing_id' , $getPricingId->values()->first())
+                              ->first();
+         
+         if(!$findVip){
+            //buat VIP untuk user
+            VipUser::create([
+                'user_id' => $pricing_order->user_id,
+                'pricing_id' => $getPricingId->values()->first(),
+                'vip_duration' => Carbon::now()->addDays($pricing_order->pricing_duration_in_days)
+            ]);
+         }else{
+             //update tanggal vip
+            $findVip->vip_duration = Carbon::parse($findVip->vip_duration)
+                                            ->addDays($pricing_order->pricing_duration_in_days); 
+             $findVip->save();
+         }
+    }
 
      /**
      * Midtrans api change payment method .
@@ -251,9 +284,12 @@ class PricingOrderController extends Controller
                     'payment_type' => $vaPayment,
                     'payment_number' => $vaNumber
                 ]);
+                
+                if($data_order['transaction_status']  == 'capture'){
+                    //buat vip untuk user
+                    $this->vip_user($pricing_order);
+                }
 
-                $data_order['transaction_status'] != 'capture' ? : User::where('id' , $pricing_order->user_id)->update(['vip' => true , 'vip_duration' => Carbon::now()->addDays($pricing_order->pricing_duration_in_days)]);
-               
                     //expiring old order 
                     $this->expiring_order($pricing_order->order_id);
                     DB::commit();
@@ -290,15 +326,15 @@ class PricingOrderController extends Controller
            return redirect()->route('pricing.index')->with('failure' , 'Something Wrong , Your Transaction on Pending');
         }
 
-        //perbarui status pada database
+        //perbarui status pesanan selesai pada database
         if($request->transaction_status == 'settlement' || $request->transaction_status == 'capture'){
             if($order->transaction_status  == 'pending' || $order->transaction_status == 'capture'){
                 $order->transaction_status = $request->transaction_status;
                 $order->save();
-            
-                 //update user
-                 User::where('id' , $order->user_id)->update(['vip' => true , 'vip_duration' => Carbon::now()->addDays($order->pricing_duration_in_days)]);
-               
+                
+                //buat vip untuk user
+                $this->vip_user($order);
+                
                 $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
             }
           

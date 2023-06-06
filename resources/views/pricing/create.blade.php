@@ -5,6 +5,10 @@
         @error('pricing_name')
             {{ $message }}
         @enderror
+        <select name="vip_power" id="">
+            <option value="NORMAL VIP">NORMAL VIP</option>
+            <option value="SUPER VIP">SUPER VIP</option>
+        </select>
         <input type="number" name="price" placeholder="Price"> <br>
         <input type="number" name="discount" placeholder="discount"><br>
         <input type="number" name="duration" placeholder="duration"><br>

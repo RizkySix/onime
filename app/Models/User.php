@@ -45,4 +45,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(PricingOrder::class);
     }
+
+    public function vip()
+    {
+        return $this->hasMany(VipUser::class);
+    }
 }

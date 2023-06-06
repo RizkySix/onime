@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean('vip')->default(false);
-            $table->dateTime('vip_duration');
             $table->string('token')->nullable();
             $table->boolean('admin')->default(false);
             $table->rememberToken();
