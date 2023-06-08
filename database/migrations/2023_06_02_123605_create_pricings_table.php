@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('pricing_name')->unique();
             $table->string('vip_power')->default('NORMAL');
-            $table->float('price');
+            $table->decimal('price');
             $table->integer('discount')->nullable()->default(0);
             $table->integer('duration');
             $table->text('description');

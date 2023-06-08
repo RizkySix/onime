@@ -16,7 +16,7 @@ class AllVipAnimeController extends Controller
     public function all_vip_anime(Request $request)
     {
 
-        if($request->user()->tokenCan('vip-token')){
+        if($request->user()->tokenCan('vip-token') || $request->user()->tokenCan('super-vip-token')){
 
          //query awal
          $fetchAnime = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])
