@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\GetAllAnimeResource;
 use App\Models\AnimeName;
 use App\Models\AnimeRating;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -48,7 +49,7 @@ class AllAnimeController extends Controller
          $allAnime = $fetchAnime->where('anime_name' , 'LIKE' , '%' . $request->find_anime . '%')  
                                 ->simplePaginate(10);
         }
-
+       
         return response()->json([
             'status' => true,
             'total_result_found' => $allAnime->count(),

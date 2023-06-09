@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 class UpdateExpiredVip implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    public $tries = 5;
+    public $backoff = 10;
 
     /**
      * Create a new job instance.

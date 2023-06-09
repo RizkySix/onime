@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\UpdateExpiredVip;
 use App\Models\Pricing;
 use App\Models\User;
-use App\Models\VipUser;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
@@ -17,7 +14,6 @@ class DashboardController extends Controller
    public function view(Request $request)
    {
  
-
      return view('dashboard' , [
          'user' => User::all()
      ]);

@@ -20,6 +20,12 @@ if(!function_exists('delete_expired_otp')){
 if(!function_exists('expired_vip')){
     function expired_vip()
     {
-        dispatch(new UpdateExpiredVip())->delay(10);
+
+        //membuat daily schedule secara manual untuk update abilites token, dengan rentang waktu dari pukul 12:00 sampai 12:30
+      /*   $interval = Carbon::now()->parse('00:00:00');
+        if(Carbon::now() > $interval && Carbon::now() < $interval->addMinutes(30)){
+            dispatch(new UpdateExpiredVip())->delay(10);
+        } */
+
     }
 }

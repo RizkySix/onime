@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
+  Route::middleware(['normal_token_limiter'])->group(function () {
+
     Route::get('/animes' , [AllAnimeController::class , 'get_all'])->name('api.all-anime');
     Route::get('/animes/{anime_name}' , [AllAnimeController::class , 'show'])->name('api.show-anime');
 
@@ -27,6 +29,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/genres/{genre_name}' , [AllGenreController::class , 'show'])->name('api.show-genre');
 
     Route::get('/anime-list' , [AnimeListController::class , 'anime_list'])->name('api.anime-list');
+
+  });
 
     //vip
     Route::get('/animes-vip' , [AllVipAnimeController::class , 'all_vip_anime'])->name('api.all-vip-anime');
