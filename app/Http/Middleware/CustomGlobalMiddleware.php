@@ -18,6 +18,7 @@ class CustomGlobalMiddleware
     {
       
         delete_expired_otp();
+        expired_vip();
         return $next($request);
     }
 }

@@ -127,6 +127,15 @@ class PricingOrderController extends Controller
           $realPrice = $pricing_name->price - $getDiscount;
          
           DB::beginTransaction();
+
+          //mendapat transaction status settlement jika metode bayar dengan INDOMARET
+          if($data_order['payment_type'] == 'cstore'){
+                $response = $this->get_transaction_status($data_order['order_id']);
+
+                if($response['status_code'] == '200' && $response['transaction_status'] == 'settlement'){
+                    $data_order['transaction_status'] = $response['transaction_status'];
+                }
+          }
          
         $pricing_order =  PricingOrder::create([
             'user_id' => auth()->user()->id,
@@ -171,7 +180,7 @@ class PricingOrderController extends Controller
         
         $arrResponse = json_decode($response , true);
     
-        $status_code = ['401' , '412' , '404'];
+        $status_code = ['401' , '412' , '404']; //status code untuk error response
         if(in_array($arrResponse['status_code'] , $status_code)){
             $message = 'Failed to cancel the order, still willing ? please wait until the order expires'  ;
         }
@@ -183,6 +192,22 @@ class PricingOrderController extends Controller
         return back()->with('status' , $message);
       
     }
+
+     /**
+     * Midtrans get transaction status.
+     */
+    public function get_transaction_status($order_id)
+    {
+        $response = Http::withBasicAuth(env('MIDTRANS_SERVERKEY') , '')
+        ->withHeaders([
+            'accept' => 'application/json'
+        ])
+        ->get('https://api.sandbox.midtrans.com/v2/' . $order_id . '/status');
+
+        $arrResponse = json_decode($response , true);
+        return $arrResponse;
+    }
+
 
      /**
      * Midtrans api expire order.
@@ -206,7 +231,7 @@ class PricingOrderController extends Controller
     public function vip_user(PricingOrder $pricing_order) : void
     {
          //get pricing ID 
-         $getPricingId = Pricing::where('pricing_name' , $pricing_order->pricing_type)->pluck('id');
+         $getPricingId = Pricing::withTrashed()->where('pricing_name' , $pricing_order->pricing_type)->pluck('id');
 
          //cek apakah data vip yang sama sudah ada 
         $findVip = VipUser::where('user_id' , $pricing_order->user_id)
@@ -276,6 +301,7 @@ class PricingOrderController extends Controller
         use($pricing_order , $data_order , $vaNumber , $vaPayment , &$message)
         {
             DB::beginTransaction();
+
             DB::table('pricing_orders')->where('order_id' , $pricing_order->order_id)->lockForUpdate()->get();
             if($data_order['transaction_status'] == 'pending' || $data_order['transaction_status'] == 'capture'){
                 PricingOrder::where('order_id' , $pricing_order->order_id)->update([
