@@ -14,7 +14,10 @@
                     <form action="{{ route('token-maker') }}" method="POST">
                     @csrf
                     <input type="text" readonly disabled value="{{ auth()->user()->token }}" style="width:500px;">
-                    <button>Buat Token</button>
+                    <button>Buat Token</button> <br>
+                    @if (session('limit'))
+                        {{ session('limit') }}
+                    @endif
                     </form>
                     <br><br>
                     <div class="mt-4">

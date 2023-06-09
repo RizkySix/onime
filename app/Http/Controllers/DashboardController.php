@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pricing;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
@@ -22,7 +23,16 @@ class DashboardController extends Controller
 
    public function generate_token()
    {
+
       $user = auth()->user();
+
+      $tokenCreated = DB::table('personal_access_tokens')->where('tokenable_id' , $user->id)->pluck('created_at');
+     
+      //membatasi supaya user hanya bisa generate token hanya 1x24 jam
+      if(Carbon::now() < Carbon::parse($tokenCreated->values()->first())->addHours(24)){
+         return back()->with('limit' , 'Generate Token Once Per Day');
+      }
+
       $user->tokens()->delete();
 
       $tokenName = 'onime-api-' . $user->name;
