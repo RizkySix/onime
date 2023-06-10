@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -42,6 +43,13 @@ class Handler extends ExceptionHandler
                    'status' => false,
                    'message' => 'Bad http method request',
               ], 400);
+        });
+
+        $this->renderable(function (AccessDeniedHttpException $e) {
+            return response()->json([
+                   'status' => false,
+                   'message' => 'Only valid user can access this endpoint',
+              ], 403);
         });
         
     }

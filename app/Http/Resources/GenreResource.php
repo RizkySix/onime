@@ -16,7 +16,8 @@ class GenreResource extends JsonResource
     {
         return [
             'genre_name' => $this->genre_name,
-            'animes' => GenreAnimeResource::collection($this->whenLoaded('anime_name'))
+            'animes' => GenreAnimeResource::collection($this->whenLoaded('anime_name' , 
+            $this->anime_name->load('genres')))
         ];
     }
 }

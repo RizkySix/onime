@@ -30,8 +30,9 @@ class AllGenreController extends Controller
     public function show(Genre $genre_name , Request $request)
     {
         $fetchGenre = $genre_name->load(['anime_name' => function($query) use($request) {
-            $query->with(['rating:rating,anime_name_id'])->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
-            ->when(!$request->user()->tokenCan('vip-token') , function($subQuery) {
+            $query->with(['rating:rating,anime_name_id'])
+            ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
+            ->when(!$request->user()->tokenCan('vip-token') && !$request->user()->tokenCan('super-vip-token') , function($subQuery) {
                 $subQuery->where('vip' , false);
             })->when($request->rating == true , function($queryRating) {
                 $queryRating->orderByDesc(AnimeRating::select('rating')

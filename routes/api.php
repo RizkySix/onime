@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
-  Route::middleware(['normal_token_limiter'])->group(function () {
+  Route::middleware(['normal_token_limiter' , 'ability:normal-token,vip-token,super-vip-token'])->group(function () {
 
     Route::get('/animes' , [AllAnimeController::class , 'get_all'])->name('api.all-anime');
     Route::get('/animes/{anime_name}' , [AllAnimeController::class , 'show'])->name('api.show-anime');
@@ -33,7 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   });
 
     //vip
-    Route::get('/animes-vip' , [AllVipAnimeController::class , 'all_vip_anime'])->name('api.all-vip-anime');
+    Route::get('/animes-vip' , [AllVipAnimeController::class , 'all_vip_anime'])->name('api.all-vip-anime')->middleware('ability:vip-token,super-vip-token');
 
     //rating
     Route::put('/animes/{anime_name}/rating' , [AllAnimeController::class , 'rating'])->name('api.rating-anime');

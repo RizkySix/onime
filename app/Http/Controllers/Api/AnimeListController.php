@@ -14,14 +14,18 @@ class AnimeListController extends Controller
      */
     public function anime_list(Request $request)
     {
-        $fetchAnime = AnimeName::select('anime_name' , 'slug')->when(!$request->user()->tokenCan('vip-token') , function($query) {
+        $fetchAnime = AnimeName::select('anime_name' , 'slug')
+        ->when(!$request->user()->tokenCan('vip-token') && !$request->user()->tokenCan('super-vip-token'),
+         function($query) {
             $query->where('vip' ,  false);
         });
 
         //fetch anime yang dipublish 30 hari kebelakang
         $month = Carbon::now()->subDays(30);
 
-        $request->list && strlen($request->list) == 1 ? $allAnime = $fetchAnime->where('anime_name' , 'LIKE' , $request->list . '%')->latest()->get() : $allAnime = $fetchAnime->where('created_at' , '>=' , $month)->get();
+        $request->list && strlen($request->list) == 1 ? 
+        $allAnime = $fetchAnime->where('anime_name' , 'LIKE' , $request->list . '%')->latest()->get() : 
+        $allAnime = $fetchAnime->where('created_at' , '>=' , $month)->get();
 
         return response([
             'status' => true,

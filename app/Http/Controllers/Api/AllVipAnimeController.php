@@ -64,8 +64,8 @@ class AllVipAnimeController extends Controller
             }else{
                 return response()->json([
                     'status' => false,
-                    'message' => 'Only VIP user can access this Url'
-                ] , 401) ;
+                    'message' => 'Only VIP user can access this endpoint'
+                ] , 403) ;
             }
     }
 }
