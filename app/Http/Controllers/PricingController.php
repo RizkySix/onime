@@ -5,10 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Pricing\StorePricingRequest;
 use App\Http\Requests\Pricing\UpdatePricingRequest;
 use App\Models\Pricing;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Http\Request;
 
 class PricingController extends Controller
 {
+
+    /**
+     * Policies Authorization.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Pricing::class , 'pricing');
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -26,6 +37,7 @@ class PricingController extends Controller
      */
     public function create()
     {
+
         return view('pricing.create');
     }
 
@@ -46,7 +58,7 @@ class PricingController extends Controller
      */
     public function show(Pricing $pricing)
     {
-        //
+        
     }
 
     /**
@@ -54,6 +66,7 @@ class PricingController extends Controller
      */
     public function edit(Pricing $pricing)
     {
+      
         return view('pricing.update' , [
             'pricing' => $pricing
         ]);

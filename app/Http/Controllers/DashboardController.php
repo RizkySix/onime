@@ -65,5 +65,11 @@ class DashboardController extends Controller
      return redirect('dashboard');
    }
 
+
+
+   public function view_admin()
+   {
+      return view('admin.dashboard');
+   }
    
 }

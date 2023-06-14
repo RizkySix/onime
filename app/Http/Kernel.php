@@ -66,6 +66,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'otp_verified' => \App\Http\Middleware\OtpVerifEmail::class,
         'normal_token_limiter' => \App\Http\Middleware\NormalTokenLimiter::class,
+        'admin' => \App\Http\Middleware\Admin::class,
+        'customer' => \App\Http\Middleware\Customer::class,
         'verified_user' => \App\Http\Middleware\VerifiedUser::class,
         'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
