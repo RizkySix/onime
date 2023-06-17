@@ -1,5 +1,6 @@
+
 <style>
-    .main-button {
+    .url-href {
         
         display: inline-block;
                     outline: none;
@@ -20,6 +21,7 @@
     }
 </style>
 
-<button type="{{ $type }}" class="main-button {{ $class }}" >
+
+<a href="{{ $href }}" class="url-href text-decoration-none">
     {{ $slot }}
-</button>
+</a>
