@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnimeNameController;
 use App\Http\Controllers\AnimeVideoController;
+use App\Http\Controllers\ApiDocumentationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PricingController;
@@ -61,6 +62,13 @@ Route::middleware(['customer'])->group(function() {
    Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method');
 });
 
+});
+
+
+
+//route API documentaion
+Route::prefix('doc')->group(function () {
+    Route::get('/get-all-anime' , [ApiDocumentationController::class , 'doc_get_all'])->name('doc.get-all');
 });
 
 
