@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class ApiDocumentationController extends Controller
 {
+    /**
+     * guide documentation.
+     */
+    public function doc_guide() : View
+    {
+        return view('documentation.integration-guide');
+    }
       /**
      * Get all anime API documentation.
      */

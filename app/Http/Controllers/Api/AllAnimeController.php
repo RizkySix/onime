@@ -23,7 +23,7 @@ class AllAnimeController extends Controller
         $fetchAnime = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])
         ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
         ->where('vip' , false)
-        ->when($request->rating == true , function($query) {
+        ->when($request->rating == 'true' , function($query) {
             $query->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id')); //query untuk order by rating secara desc
         }, function($query) {
             $query->latest();

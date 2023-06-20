@@ -69,6 +69,7 @@ Route::middleware(['customer'])->group(function() {
 //route API documentaion
 Route::prefix('doc')->group(function () {
     Route::get('/get-all-anime' , [ApiDocumentationController::class , 'doc_get_all'])->name('doc.get-all');
+    Route::get('/integration-guide' , [ApiDocumentationController::class , 'doc_guide'])->name('doc.guide');
 });
 
 
