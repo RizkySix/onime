@@ -15,6 +15,7 @@ class AllGenreController extends Controller
      */
     public function all_genre()
     {
+        //withCount menghitung jumlah data berdasarkan relasi
         $fetchGenre = Genre::select('genre_name')->withCount('anime_name as anime_result')->orderBy('anime_result' , 'DESC')->get();
 
         return response()->json([
@@ -34,7 +35,7 @@ class AllGenreController extends Controller
             ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
             ->when(!$request->user()->tokenCan('vip-token') && !$request->user()->tokenCan('super-vip-token') , function($subQuery) {
                 $subQuery->where('vip' , false);
-            })->when($request->rating == true , function($queryRating) {
+            })->when($request->rating == 'true' , function($queryRating) {
                 $queryRating->orderByDesc(AnimeRating::select('rating')
                             ->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
             });

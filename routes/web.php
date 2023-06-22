@@ -69,6 +69,9 @@ Route::middleware(['customer'])->group(function() {
 //route API documentaion
 Route::prefix('doc')->group(function () {
     Route::get('/get-all-anime' , [ApiDocumentationController::class , 'doc_get_all'])->name('doc.get-all');
+    Route::get('/show-anime' , [ApiDocumentationController::class , 'doc_show_anime'])->name('doc.show');
+    Route::get('/all-genre' , [ApiDocumentationController::class , 'doc_all_genre'])->name('doc.genre');
+    Route::get('/anime-by-genre' , [ApiDocumentationController::class , 'doc_anime_by_genre'])->name('doc.anime-genre');
     Route::get('/integration-guide' , [ApiDocumentationController::class , 'doc_guide'])->name('doc.guide');
 });
 

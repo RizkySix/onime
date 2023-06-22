@@ -31,7 +31,6 @@
         }
         .active-url{
            background-color: rgb(224, 222, 220);
-           padding: 2px 5px;
            border-radius: 1rem 1rem 1rem 1rem;
         }
     </style>
@@ -54,7 +53,7 @@
                     <span id="title-free-api" class="api-intergration" style="cursor: pointer">API Intergration</span>
                     <div class="free-api-list">
                        <a href="{{ route('doc.get-all') }}" class="{{ Request::route()->getName() == 'doc.get-all' ? 'active-url' : '' }} text-decoration-none">&#8594 Get All Anime</a> <br>
-                       <a href="" class="text-decoration-none">&#8594 Show Specific Anime</a>
+                       <a href="{{ route('doc.show') }}" class="{{ Request::route()->getName() == 'doc.show' ? 'active-url' : '' }} text-decoration-none">&#8594 Show Specific Anime</a>
                     </div>
                   </div>
                   <hr style="margin-top:30px;">
@@ -62,8 +61,8 @@
                     <span class="fw-bold h5">Genre</span><br>
                     <span id="title-genre-api" class="api-intergration" style="cursor: pointer">API Intergration</span>
                     <div class="genre-list">
-                       <a href="" class="text-decoration-none">&#8594 Genre List</a> <br>
-                       <a href="" class="text-decoration-none">&#8594 Anime By Genre</a>
+                       <a href="{{ route('doc.genre') }}" class="{{ Request::route()->getName() == 'doc.genre' ? 'active-url' : '' }} text-decoration-none">&#8594 Genre List</a> <br>
+                       <a href="{{ route('doc.anime-genre') }}" class="{{ Request::route()->getName() == 'doc.anime-genre' ? 'active-url' : '' }} text-decoration-none">&#8594 Anime By Genre</a>
                     </div>
                   </div>
                   <hr style="margin-top:30px;">

@@ -89,9 +89,11 @@ class AllAnimeController extends Controller
        $relatedAnimes = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])->when(!$request->user()->tokenCan('vip-token') && !$request->user()->tokenCan('super-vip-token') , function($query){
         $query->where('vip' , false); //jika token bukan salah satu dari vip-token/super-vip, rekomendasikan anime dengan vip false
        })
-       ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' ,'vip')->whereHas('genres' , function($query) use($genreId , $anime_name) {
+       ->select('id', 'anime_name' , 'slug' , 'total_episode' , 'studio' , 'author' , 'description' , 'released_date' ,'vip')
+       ->whereHas('genres' , function($query) use($genreId , $anime_name) {
             $query->whereIn('genres_id' , $genreId)->where('anime_names_id' , '!=' , $anime_name->id);
        })
+       //->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id')) // jika ingin rekomdasi berdasarkan rating tertinggi
        ->take(5)
        ->get();  
 

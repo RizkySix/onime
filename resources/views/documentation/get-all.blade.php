@@ -9,55 +9,60 @@
            <hr class="text-muted mt-4 mb-4">
            <div class="content">
             <div class="endpoint mb-4">
-                <h4>Api Endpoint</h4>
+               <div class="d-flex">
+                <h4>Api Endpoint </h4> 
+                <x-bootsrap.http-request>
+                    GET
+                </x-bootsrap.http-request>
+               </div>
                 <input type="text" class="form-control w-50" readonly value="http://onime.test/api/ver1/animes">
             </div>
             <div class="example-response">
                 <h4>Example Response</h4>
                 <p>Berikut adalah contoh response yang dikembalikan dari permintaan ke endpoint diatas.</p>
-                <x-bootsrap.code-snipet>
-                    {
-                        "status": true,
-                        "total_result_found": 2,
-                        "paginate": {
-                            "result_limit": 100,
-                            "page": 10,
-                            "current_page": 1,
-                            "data_per_page": 10
-                        },
-                        "animes": [
-                            {
-                                "anime_name": "Baskat Ball",
-                                "slug": "baskat-ball",
-                                "total_episode": 12,
-                                "rating": 0,
-                                "released_date": "Unknown",
-                                "studio": "Mappa",
-                                "author": "Janu",
-                                "vip": false,
-                                "description": "Ball and Soccer",
-                                "genre": "Action, Jump, Shounen, Sport"
-                            },
-                            {
-                                "anime_name": "One Puch Man",
-                                "slug": "one-puch-man",
-                                "total_episode": 24,
-                                "rating": 7.7,
-                                "released_date": "2012",
-                                "studio": "Mappa",
-                                "author": "Shirahosi",
-                                "vip": false,
-                                "description": "Shounen and Diff",
-                                "genre": "Demon, Hun, Killing, Scifi"
-                            }
-                        ]
-                    }
-                </x-bootsrap.code-snipet>
+<x-bootsrap.code-snipet>
+    {
+        "status": true,
+        "total_result_found": 2,
+        "paginate": {
+            "result_limit": 100,
+            "page": 10,
+            "current_page": 1,
+            "data_per_page": 10
+        },
+        "animes": [
+            {
+                "anime_name": "Baskat Ball",
+                "slug": "baskat-ball",
+                "total_episode": 12,
+                "rating": 0,
+                "released_date": "Unknown",
+                "studio": "Mappa",
+                "author": "Janu",
+                "vip": false,
+                "description": "Ball and Soccer",
+                "genre": "Action, Jump, Shounen, Sport"
+            },
+            {
+                "anime_name": "One Puch Man",
+                "slug": "one-puch-man",
+                "total_episode": 24,
+                "rating": 7.7,
+                "released_date": "2012",
+                "studio": "Mappa",
+                "author": "Shirahosi",
+                "vip": false,
+                "description": "Shounen and Diff",
+                "genre": "Demon, Hun, Killing, Scifi"
+            }
+        ]
+    }
+</x-bootsrap.code-snipet>
 
             </div>
            </div>
            <hr class="text-muted mt-4 mb-4">
-           <div class="parameter">
+           <div class="parameter mb-4">
                 <h4>Query Parameters</h4>
                 <p>Query parameters yang dapat digunakan dalam permintaan ke endpoint diatas.</p>
                 <table class="table table-bordered mt-3">

@@ -21,4 +21,25 @@ class ApiDocumentationController extends Controller
     {
         return view('documentation.get-all');
     }
+    /**
+     * show anime API documentation.
+     */
+    public function doc_show_anime() : View
+    {
+        return view('documentation.show-anime');
+    }
+     /**
+     * genre anime API documentation.
+     */
+    public function doc_all_genre() : View
+    {
+        return view('documentation.all-genre');
+    }
+     /**
+     * anime by genre anime API documentation.
+     */
+    public function doc_anime_by_genre() : View
+    {
+        return view('documentation.anime-by-genre');
+    }
 }

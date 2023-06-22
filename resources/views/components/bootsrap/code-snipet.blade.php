@@ -8,7 +8,8 @@
         overflow-x: auto;
         display: inline-block;
         height: 200px;
-        max-width: 100%;
+        min-width: 50%;
+        max-width: 60%;
     
     }
 </style>
