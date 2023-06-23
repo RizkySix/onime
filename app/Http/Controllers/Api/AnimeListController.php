@@ -20,7 +20,7 @@ class AnimeListController extends Controller
             $query->where('vip' ,  false);
         });
 
-        //fetch anime yang dipublish 30 hari kebelakang
+        //fetch anime yang dipublish 30 hari kebelakang jika request list -+ dari 1 huruf
         $month = Carbon::now()->subDays(30);
 
         $request->list && strlen($request->list) == 1 ? 

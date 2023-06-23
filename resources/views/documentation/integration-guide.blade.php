@@ -22,7 +22,7 @@
        <div class="using">
         <div class="content">
             <h4>Bagaimana ini Bekerja</h4>
-            <p>Berikut parameter yang harus dikirim pada HTTP headers.</p>
+            <p>Berikut contoh parameter yang harus dikirim pada HTTP headers.</p>
             <table class="table table-bordered mt-3">
                 <tbody>
                     <tr>

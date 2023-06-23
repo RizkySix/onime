@@ -22,7 +22,7 @@ class AllVipAnimeController extends Controller
          $fetchAnime = AnimeName::with(['genres:genre_name' , 'rating:rating,anime_name_id'])
          ->select('id', 'anime_name' , 'slug' , 'total_episode'  , 'studio' , 'author' , 'description' , 'released_date' , 'vip')
          ->where('vip' , true)
-         ->when($request->rating == true , function($query) {
+         ->when($request->rating == 'true' , function($query) {
              $query->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
          }, function($query) {
              $query->latest();

@@ -124,7 +124,7 @@ class AllAnimeController extends Controller
 
             DB::beginTransaction();
             $getRating = $anime_name->load(['rating' => function($query) {
-                $query->lockForUpdate();
+                $query->lockForUpdate(); //lock for update tabel anime_ratings
             }]);
             $point = $getRating->rating->point;
             $participan = $getRating->rating->participan;

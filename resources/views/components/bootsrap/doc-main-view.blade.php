@@ -13,6 +13,31 @@
             background-repeat: no-repeat;
             background-size: cover;
         }
+
+        /* scrollbar */
+        /* width */
+        ::-webkit-scrollbar {
+        width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+        }
+        
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+        background: #e7d9d9; 
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+        background: #dbafaf; 
+        }
+
+
+        /* content */
+
         .left-container{
             position: relative;
         }
@@ -70,7 +95,7 @@
                     <span class="fw-bold h5">Anime List</span><br>
                     <span id="title-anime-list" class="api-intergration" style="cursor: pointer">API Intergration</span>
                     <div class="anime-list">
-                       <a href="" class="text-decoration-none">&#8594 List By Alphabet</a> <br>
+                       <a href="{{ route('doc.anime-list') }}" class="{{ Request::route()->getName() == 'doc.anime-list' ? 'active-url' : '' }} text-decoration-none">&#8594 List By Alphabet</a> <br>
                     </div>
                   </div>
                   <hr style="margin-top:30px;">
@@ -78,7 +103,15 @@
                     <span class="fw-bold h5">Anime VIP</span><br>
                     <span id="title-anime-vip" class="api-intergration" style="cursor: pointer">API Intergration</span>
                     <div class="anime-vip-list">
-                       <a href="" class="text-decoration-none">&#8594 Get All Anime</a> <br>
+                       <a href="{{ route('doc.vip-anime') }}" class="{{ Request::route()->getName() == 'doc.vip-anime' ? 'active-url' : '' }} text-decoration-none">&#8594 Get All Anime</a> <br>
+                    </div>
+                  </div>
+                  <hr style="margin-top:30px;">
+                  <div class="anime-rating-point">
+                    <span class="fw-bold h5">Send Rating</span><br>
+                    <span id="title-anime-rating-point" class="api-intergration" style="cursor: pointer">API Intergration</span>
+                    <div class="send-rating">
+                       <a href="{{ route('doc.send-rating') }}" class="{{ Request::route()->getName() == 'doc.send-rating' ? 'active-url' : '' }} text-decoration-none">&#8594 Contributing Rating</a> <br>
                     </div>
                   </div>
                   <hr style="margin-top:30px;">
@@ -111,6 +144,9 @@
         })
         $('#title-anime-vip').click(function(){
             $('.anime-vip-list').toggle('fast')
+        })
+        $('#title-anime-rating-point').click(function(){
+            $('.send-rating').toggle('fast')
         })
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>

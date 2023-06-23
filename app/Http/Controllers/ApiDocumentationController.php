@@ -42,4 +42,25 @@ class ApiDocumentationController extends Controller
     {
         return view('documentation.anime-by-genre');
     }
+     /**
+     * anime by alphabet list API documentation.
+     */
+    public function doc_anime_list() : View
+    {
+        return view('documentation.anime-list');
+    }
+     /**
+     * anime vip API documentation.
+     */
+    public function doc_vip_anime() : View
+    {
+        return view('documentation.all-vip-anime');
+    }
+    /**
+     * send anime raing API documentation.
+     */
+    public function doc_send_rating() : View
+    {
+        return view('documentation.send-rating');
+    }
 }
