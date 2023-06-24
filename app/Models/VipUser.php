@@ -10,6 +10,7 @@ class VipUser extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $casts  = ['vip_duration' => 'datetime'];
 
     public function user()
     {

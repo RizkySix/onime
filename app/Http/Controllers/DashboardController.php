@@ -15,8 +15,9 @@ class DashboardController extends Controller
    public function view(Request $request)
    {
  
-     return view('dashboard' , [
-         'user' => User::all()
+     return view('user.dashboard' , [
+         'user' => User::all(),
+         'auth' => auth()->user()
      ]);
    }
    
@@ -30,14 +31,14 @@ class DashboardController extends Controller
      
       //membatasi supaya user hanya bisa generate token hanya 1x24 jam
       if(Carbon::now() < Carbon::parse($tokenCreated->values()->first())->addHours(24)){
-         return back()->with('limit' , 'Generate Token Once Per Day');
+         return back()->with('limit' , 'Generate Token Once Per Day!');
       }
 
       $user->tokens()->delete();
 
       $tokenName = 'onime-api-' . $user->name;
    
-      if($user->vip->all() == null){
+      if($user->vip->all() == null || $user->vip->count() <= 1 && $user->vip[0]->vip_duration < Carbon::now()){
          $token = $user->createToken($tokenName , ['normal-token'])->plainTextToken;
       }else{
          

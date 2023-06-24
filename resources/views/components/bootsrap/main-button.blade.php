@@ -20,6 +20,6 @@
     }
 </style>
 
-<button type="{{ $type }}" class="main-button {{ $class }}" >
+<button type="{{ $type }}" class="main-button {{ isset($class) ? $class : '' }}" >
     {{ $slot }}
 </button>
