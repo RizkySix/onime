@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pricing;
+use App\Models\PricingOrder;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -73,7 +74,16 @@ class DashboardController extends Controller
 
    public function view_admin()
    {
-      return view('admin.dashboard');
+      return view('admin.dashboard' , [
+         'pricings' => Pricing::select('id' , 'pricing_name')->with(['vip:id,pricing_id'])->withCount('vip as vip_total')->get(),
+         'orders' => PricingOrder::whereMonth('created_at' , Carbon::now()->month)
+                                    ->whereYear('created_at' , Carbon::now()->year)
+                                    ->count(),
+         'paid_orders' => PricingOrder::whereIn('transaction_status' , ['capture' , 'settlement'])
+                                    ->whereMonth('created_at' , Carbon::now()->month)
+                                    ->whereYear('created_at' , Carbon::now()->year)
+                                    ->count()
+      ]);
    }
    
 }
