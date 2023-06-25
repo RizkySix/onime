@@ -157,9 +157,19 @@ class PricingOrderController extends Controller
 
           $realPrice == $data_order['gross_amount'] ? (DB::commit()) . ($message = 'Payment Success') : (DB::rollBack()) . ($message = 'No Match Gross Amount');
 
-          return redirect()->route('pricing.index')->with('payment-success' , $message);
+          return redirect()->route('transaction-done' , $pricing_order)->with('payment-success' , $message);
 
        
+    }
+
+     /**
+     * View Transaction Done
+     */
+    public function transaction_done(PricingOrder $pricing_order)
+    {
+        return view('pricing-order.transaction-done' , [
+            'order' => $pricing_order
+        ]);
     }
 
       /**

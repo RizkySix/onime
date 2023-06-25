@@ -16,7 +16,7 @@ class PricingController extends Controller
      */
     public function __construct()
     {
-        $this->authorizeResource(Pricing::class , 'pricing');
+        $this->authorizeResource(Pricing::class , 'pricing'); //deklarasai policies
     }
 
 
@@ -25,10 +25,9 @@ class PricingController extends Controller
      */
     public function index()
     { 
-        $pricings = Pricing::withTrashed()->select('pricing_name' , 'vip_power' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->get();
-        return view('pricing.all-pricing' , [
+        $pricings = Pricing::select('pricing_name' , 'vip_power' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->get();
+        return view('pricing.pricing-view' , [
             'pricings' => $pricings,
-            'user_order' => auth()->user()->order
         ]);
     }
 

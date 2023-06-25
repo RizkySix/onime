@@ -57,6 +57,7 @@ Route::middleware(['customer'])->group(function() {
 
     Route::get('/transaction-view/{pricing_name}' , [PricingOrderController::class , 'transaction_view'])->name('transaction-view');
    Route::post('/transaction/{pricing_name}' , [PricingOrderController::class , 'transaction'])->name('transaction');
+   Route::get('/transaction-done/{pricing_order}' , [PricingOrderController::class , 'transaction_done'])->name('transaction-done');
    Route::post('/cancel-order/{pricing_order}' , [PricingOrderController::class , 'cancel_order'])->name('cancel-order');
    Route::get('/change-payment-method/{pricing_order}/edit' , [PricingOrderController::class , 'change_payment_method_view'])->name('change-payment-method-view');
    Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method');

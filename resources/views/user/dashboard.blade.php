@@ -50,9 +50,9 @@
                         <div class="card-body">
                         @if ($auth->vip->count())
                         @php
-                          $vips = $auth->vip->load('pricing');
+                         /*  $vips = $auth->vip->load('pricing'); */
                         @endphp
-                            @foreach ($vips as $vip)
+                            @foreach ($auth->vip as $vip)
                                 @if ($vip->vip_duration > \Carbon\Carbon::now())
                                 <div class="vip-detail">
                                    <h5 class="fw-bold text-center">{{ $vip->pricing->pricing_name }} MEMBER</h5>

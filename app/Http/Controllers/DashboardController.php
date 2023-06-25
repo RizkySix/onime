@@ -16,8 +16,11 @@ class DashboardController extends Controller
    {
  
      return view('user.dashboard' , [
-         'user' => User::all(),
-         'auth' => auth()->user()
+         'auth' => auth()->user()->load(['vip' => function($query) {
+               $query->with(['pricing' => function($subQuery) {
+                  $subQuery->withTrashed()->select('id' , 'pricing_name' , 'vip_power');
+               }]);
+         }])
      ]);
    }
    
