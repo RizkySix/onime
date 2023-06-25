@@ -49,6 +49,6 @@
 }
 </style>
 
-<button class="payment-button" type="{{ $type }}" id="{{ isset($id) ? $id : '' }}">
+<button class="payment-button {{ isset($class) ?  $class : '' }}" type="{{ $type }}" id="{{ isset($id) ? $id : '' }}">
 {{ $slot }}
 </button>

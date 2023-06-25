@@ -63,18 +63,34 @@
                                     <h6 class="text-muted text-center mt-3">
                                         Durasi berlangganan anda akan habis dalam {{ $vip->vip_duration->diffForHumans() }}
                                     </h6>
+                                    <form action="/transaction-view/{{ $vip->pricing->pricing_name }}" method="GET" class="mt-4 d-flex justify-content-center">
+                                        <x-bootsrap.payment-button type="submit">
+                                            PERPANJANG
+                                        </x-bootsrap.payment-button>
+                                    </form>
                                 </div>
                                 <hr>
                                 @elseif($auth->vip->count() <= 1)
                                     <div class="non-vip">
-                                        <h5 class="fw-bold text-center">Kamu Belum Berlangganan VIP 😒</h5> <br>
+                                        <h5 class="fw-bold text-center">Kamu Belum Berlangganan VIP 😒</h5>
+
+                                        <form action="/pricing" method="GET" class="mt-4 d-flex justify-content-center">
+                                            <x-bootsrap.payment-button type="submit">
+                                                BERLAGGANAN SEKARANG
+                                            </x-bootsrap.payment-button>
+                                        </form>
                                     </div>
                                 @endif
                               
                              @endforeach
                         @else
                         <div class="non-vip">
-                            <h5 class="fw-bold text-center">Kamu Belum Berlangganan VIP 😒</h5> <br>
+                            <h5 class="fw-bold text-center">Kamu Belum Berlangganan VIP 😒</h5> 
+                            <form action="/pricing" method="GET" class="mt-4 d-flex justify-content-center">
+                                <x-bootsrap.payment-button type="submit">
+                                    BERLAGGANAN SEKARANG
+                                </x-bootsrap.payment-button>
+                            </form>
                         </div>
                         @endif
                         </div>

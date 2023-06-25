@@ -1,4 +1,4 @@
-<x-bootsrap.main-view title="Payment Confirmation">
+<x-bootsrap.main-view title="Payment Success">
    
      <div class="container">
        <div class="row d-flex vh-100 justify-content-center align-items-center">
@@ -32,6 +32,13 @@
                     <span class="fw-bold">{{ $order->order_id }}</span><br>
                     <span>Metode Pembayaran :</span> <br>
                     <span class="fw-bold">{{ strtoupper($order->payment_type) }}</span>
+                    @if ($order->transaction_status == 'pending')
+                    <form action="/change-payment-method/{{ $order->order_id }}/edit" method="GET" class="mt-4" >
+                      <x-bootsrap.payment-button type="sumbit">
+                         UBAH METODE PEMBAYARAN
+                      </x-bootsrap.payment-button>
+                      </form>
+                    @endif
                 </div>
                
               </p>

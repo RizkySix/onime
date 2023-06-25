@@ -307,10 +307,11 @@ class PricingOrderController extends Controller
 
         $message = '';
 
+        //lock menghindari race condition
         Cache::lock('change-payment-method')->block(10 , function() 
         use($pricing_order , $data_order , $vaNumber , $vaPayment , &$message)
         {
-            DB::beginTransaction();
+           DB::beginTransaction();
 
             DB::table('pricing_orders')->where('order_id' , $pricing_order->order_id)->lockForUpdate()->get();
             if($data_order['transaction_status'] == 'pending' || $data_order['transaction_status'] == 'capture'){
@@ -331,13 +332,30 @@ class PricingOrderController extends Controller
                     DB::commit();
 
                 $message = 'Success to change payment method';
+                
+            }elseif($data_order['transaction_status'] == 'settlement'){
+                PricingOrder::where('order_id' , $pricing_order->order_id)->update([
+                    'transaction_status' => $data_order['transaction_status'],
+                    'order_id' => $data_order['order_id'],
+                    'payment_type' => $vaPayment,
+                    'payment_number' => $vaNumber
+                ]);
+
+                //buat vip untuk user
+                $this->vip_user($pricing_order);
+
+                //expiring old order 
+                $this->expiring_order($pricing_order->order_id);
+                DB::commit();
+
+                $message = 'Success to change payment method';
             }else{
                 DB::rollBack();
                 $message = 'Failed to change payment method';
         }
         });
 
-       return redirect('/pricing')->with('status' , $message);
+       return redirect()->route('transaction_done' , $data_order['order_id'])->with('status' , $message);
 
     }
 
