@@ -7,6 +7,7 @@ use App\Http\Requests\AnimeName\UpdateAnimeNameRequest;
 use App\Models\AnimeName;
 use App\Models\AnimeVideo;
 use App\Observers\AnimeNameObserver;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,10 +17,21 @@ class AnimeNameController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        $animes = AnimeName::with(['genres:genre_name'])->withCount('anime_video as total_video');
+
+        if($request->order_anime_name == 'vip'){
+            $animes = $animes->orderBy('vip' , 'DESC')->get();
+        }elseif($request->order_anime_name == 'non-vip'){
+            $animes = $animes->orderBy('vip' , 'ASC')->get();
+        }else{
+            $animes = $animes->get();
+        }
+
         return view('anime.all-anime-view' , [
-            'anime_name' => AnimeName::withTrashed()->with(['anime_video:video_url,anime_name_id' , 'genres:genre_name'])->get()
+            'anime_name' => $animes
         ]);
     }
 
@@ -28,7 +40,15 @@ class AnimeNameController extends Controller
      */
     public function create()
     {
-        //
+        return view('anime.create');
+    }
+
+    /**
+     * Show the form for creating zip a new resource.
+     */
+    public function create_zip()
+    {
+        return view('anime.create-zip');
     }
 
       /**
@@ -141,7 +161,7 @@ class AnimeNameController extends Controller
      public function store_zip(StoreAnimeNameRequest $request)
      {
         $validate = $request->validate([
-            'zip' => 'required|file|mimes:zip'
+            'zip' => 'required|file|mimes:zip|max:900000'
         ]);
         
         $validatedData = $request->validated();
@@ -156,11 +176,11 @@ class AnimeNameController extends Controller
             $zipMethod = new AnimeVideoController;
            $resultExtract = $zipMethod->extract_zip($request->file('zip') , $clearAnimeName , $response->id);
 
-            $resultExtract === false ? (DB::rollBack()) . ( $info = "Fail Extracting") : ( DB::commit()) . ($info = "Success Extracting");
+            $resultExtract === false ? (DB::rollBack()) . ( $info = "Fail Extracting Zip Invalid") : ( DB::commit()) . ($info = "Success Extracting");
 
         }else{
             DB::rollBack();
-            return back();
+            return back()->with('info' , 'Duplikat, Anime Sudah Terdaftar');
         }
 
         

@@ -32,6 +32,7 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/dashboard-admin' , [DashboardController::class , 'view_admin'])->name('dashboard.admin');
     
     Route::resource('/anime-name' , AnimeNameController::class);
+    Route::get('/anime-name-zip-create' , [AnimeNameController::class , 'create_zip'])->name('anime-name.create-zip');
     Route::post('/anime-name-zip' , [AnimeNameController::class , 'store_zip'])->name('anime-name.store.zip');
     Route::post('/anime-restore/{slug}' , [AnimeNameController::class , 'restore'])->name('anime-restore');
     Route::post('/anime-force-delete/{slug}' , [AnimeNameController::class , 'force_delete'])->name('anime-force-delete');

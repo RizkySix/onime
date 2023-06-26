@@ -4,8 +4,8 @@
         <div class="border-end bg-white" id="sidebar-wrapper">
             <div class="sidebar-heading border-bottom bg-light">Admin Dashboard</div>
             <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Dashboard</a>
-                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Anime</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ route('dashboard.admin') }}">Dashboard</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ route('anime-name.index') }}">Anime</a>
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Genre Anime</a>
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Pricing</a>
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Pricing View</a>

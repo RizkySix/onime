@@ -27,7 +27,7 @@ class StoreAnimeNameRequest extends FormRequest
             'total_episode' => 'required|integer',
             'studio' => 'required|string|min:3',
             'author' => 'required|string|min:3',
-            'description' => 'required|string|min:3',
+            'description' => 'required|string|min:10',
             'released_date' => 'nullable|string|min:3',
             'genre' => 'required|string|min:3',
             'vip' => 'nullable'
