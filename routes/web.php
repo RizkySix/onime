@@ -33,11 +33,14 @@ Route::middleware(['admin'])->group(function () {
     
     Route::resource('/anime-name' , AnimeNameController::class);
     Route::get('/anime-name-zip-create' , [AnimeNameController::class , 'create_zip'])->name('anime-name.create-zip');
+    Route::get('/anime-name-list/trashed' , [AnimeNameController::class , 'trashed_anime'])->name('trashed-anime');
     Route::post('/anime-name-zip' , [AnimeNameController::class , 'store_zip'])->name('anime-name.store.zip');
     Route::post('/anime-restore/{slug}' , [AnimeNameController::class , 'restore'])->name('anime-restore');
     Route::post('/anime-force-delete/{slug}' , [AnimeNameController::class , 'force_delete'])->name('anime-force-delete');
   
     Route::resource('/anime-videos' , AnimeVideoController::class);
+    Route::get('/show-anime-video/{anime_name}' , [AnimeVideoController::class , 'show_video'])->name('show-anime-video');
+    Route::get('/show-anime-video/trashed/{anime_name}' , [AnimeVideoController::class , 'show_video_trashed'])->name('show-anime-video-trashed');
     Route::post('/anime-videos-restore/{id}' , [AnimeVideoController::class , 'restore'])->name('anime-videos-restore');
     Route::post('/anime-videos-force-delete/{id}' , [AnimeVideoController::class , 'force_delete'])->name('anime-videos-force-delete');
  

@@ -1,75 +1,102 @@
-<x-guest-layout>
-    <form action="/anime-name/{{ $anime_name->slug }}" method="POST">
-        @csrf
-        @method('put')
-        <input type="text" name="anime_name" value="{{ $anime_name->anime_name }}"><br>
-        @error('anime_name')
-          {{ $message }}
-        @enderror
-        <input type="text" name="total_episode" value="{{ $anime_name->total_episode }}"><br>
-        @error('total_episode')
-        {{ 'error' }}
-    @enderror
-        <input type="text" name="studio" value="{{ $anime_name->studio }}"><br>
-        <input type="text" name="author" value="{{ $anime_name->author }}"><br>
-        <input type="text" name="description" value="{{ $anime_name->description }}"><br>
-        <input type="text" name="released_date" value="{{ $anime_name->released_date }}"><br> <br>
-        <input type="checkbox" name="vip" value="1" @if ($anime_name->vip == true)
-            checked
-        @endif> <br>
-       @foreach ($anime_name->genres as $genre)
-       {{ $genre->genre_name }} <br>
-       <input type="text" name="genre[]" value="{{ $genre->id }}"><br>
-       @endforeach
+<x-bootsrap.main-view title="Edit Anime">
+    <style>
+  .error-msg{
+    font-size: 15px;
+  }
+</style>
+    <x-bootsrap.sidebar-admin >
+ 
+          <div class="col-sm-8 m-auto">
+            <div class="konten" style="margin-top:50px;">
+                
+                <h5 class="fw-bold text-center">Anime Edit</h5>
+                    @if (session('found-clone'))
+                    <h5 class="fw-bold text-center" style="color:red">
+                        Duplikat! Anime Sudah Terdaftar
+                    </h5>
+                    @endif
+               
 
-        <x-primary-button class="mt-4">
-            {{ __('Edit') }}
-        </x-primary-button>
-    </form> <br><br>
+                <form action="/anime-name/{{ $anime_name->slug }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('put')
+                    <div class="col-sm-12 mt-4">
+                        <div class="first-input d-flex justify-content-around">
+                            <div class="col-sm-5 ">
+                                <label for="anime_name" class="form-label">Anime Name</label>
+                                <input type="text" name="anime_name" id="anime_name" placeholder="Anime Name Goes Here" class="form-control" required value="{{ old( 'anime_name' ,  $anime_name->anime_name,) }}">
+                                @error('anime_name')
+                                    <span style="color:red" class="error-msg">{{ $message }}</span>
+                                @enderror
+                            </div>
+                           <div class="col-sm-5">
+                            <label for="released_date" class="form-label">Released Date</label>
+                            <input type="text" name="released_date" id="released_date" placeholder="Released Date Goes Here" class="form-control" value="{{ old('released_date' ,  $anime_name->released_date) }}">
+                            @error('released_date')
+                            <span style="color:red" class="error-msg">{{ $message }}</span>
+                        @enderror
+                           </div>
+                        </div>
+                        <div class="second-input d-flex mt-4 justify-content-around">
+                            <div class="col-sm-2 ">
+                                <label for="total_episode" class="form-label">Total Eps</label>
+                                <input type="number" name="total_episode" id="total_episode" placeholder="Total Eps Goes Here" class="form-control" required value="{{ old('total_episode' ,  $anime_name->total_episode) }}">
+                                @error('total_episode')
+                                <span style="color:red" class="error-msg">{{ $message }}</span>
+                             @enderror
+                            </div>
+                            <div class="col-sm-2 ">
+                                <label for="studio" class="form-label">Studio</label>
+                                <input type="text" name="studio" id="studio" placeholder="Studio Goes Here" class="form-control" required value="{{ old('studio' ,  $anime_name->studio) }}">
+                                @error('studio')
+                                <span style="color:red" class="error-msg">{{ $message }}</span>
+                            @enderror
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="author" class="form-label">Author</label>
+                                <input type="text" name="author" id="author" placeholder="Author Goes Here" class="form-control" required value="{{ old('author' ,  $anime_name->author) }}">
+                                @error('author')
+                                <span style="color:red" class="error-msg">{{ $message }}</span>
+                            @enderror
+                            </div>
+                            <div class="col-sm-3">
 
-    @foreach ($anime_name->anime_video as $item)
-        @if ($item->trashed())
-        <form action="/anime-videos-restore/{{ $item->id }}" method="POST">
-            @csrf
-            <input type="text" name="anime_eps" value="{{ $item->anime_eps }}" required style="width:360px;">
-           
-            <x-primary-button class="mt-2">
-                {{ __('Restore') }}
-            </x-primary-button>
-        </form>
+                                @php
+                                  $genres = '';
+                                  foreach($anime_name->genres as $genre){
+                                    $genres .= $genre->genre_name .',';
+                                  }
+                                @endphp
 
-        <form action="/anime-videos-force-delete/{{ $item->id }}" method="POST">
-            @csrf
-
-            <x-primary-button class="mt-2">
-                {{ __('Force Delete') }}
-            </x-primary-button>
-        </form>
-        @else
-        <form action="/anime-videos/{{ $item->id }}" method="POST">
-            @csrf
-            @method('put')
-         
-            <input type="text" name="anime_eps" value="{{ $item->anime_eps }}" required style="width:360px;">
-            @error('anime_eps')
-            {{ $message }}
-        @enderror
-            @if (session('duplicate-found'))
-                {{ session('duplicate-found') }}
-                <br>
-            @endif
-            <x-primary-button class="mt-2">
-                {{ __('Perbarui') }}
-            </x-primary-button>
-
-        </form> <br>
-        <form action="/anime-videos/{{ $item->id }}" method="POST">
-            @csrf
-            @method('delete')
-            <x-primary-button class="mt-2">
-                {{ __('Delete') }}
-            </x-primary-button>
-        </form>
-        @endif
-    @endforeach
- </x-guest-layout>
+                                <label for="genre" class="form-label">Genres</label>
+                                <input type="text" name="genre" id="genre" placeholder="Shounen,Demon,Action" class="form-control" required value="{{ old('genre' ,  $genres) }}">
+                                @error('genre')
+                                <span style="color:red" class="error-msg">{{ $message }}</span>
+                            @enderror
+                               </div>
+                        </div>
+                        <div class="second-input d-flex mt-4 justify-content-around">
+                            <div class="col-sm-12 ">
+                                <label for="description" class="form-label text-center">Description</label>
+                                <textarea class="form-control" name="description" id="description" cols="30" rows="10" required>{{ old('description' ,  $anime_name->description) }}</textarea>
+                                @error('description')
+                                <span style="color:red" class="error-msg">{{ $message }}</span>
+                            @enderror
+                            </div>
+                        </div>
+                        <div class="vip">
+                            <input type="checkbox" name="vip" value="1" class="form-check-input" {{ $anime_name->vip == true ? 'checked' : '' }}> <span class="text-muted">Checklist jika anime ini VIP</span>
+                        </div>
+                    </div>
+                    <x-bootsrap.main-button type="submit" class="mt-3">
+                        UPDATE ANIME
+                    </x-bootsrap.main-button>
+                </form>
+ 
+             
+            </div>
+          </div>
+ 
+    </x-bootsrap.sidebar-admin>
+ </x-bootsrap.main-view>
+ 

@@ -57,7 +57,7 @@ class GenreController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store($allGenre , $newAnime)
+    public function store($allGenre , $newAnime , $updateAnime = null)
     {
         $allGenre = $this->genreFilter($allGenre);
         $allGenre = explode(',' , $allGenre);
@@ -84,7 +84,11 @@ class GenreController extends Controller
         $getGenreId = Genre::withTrashed()->whereIn('genre_name' , $allGenre)->pluck('id');
         $genreId = $getGenreId->values()->toArray();
        
-        $newAnime->genres()->attach($genreId);
+        if($updateAnime == null){
+            $newAnime->genres()->attach($genreId);
+        }else{
+            $newAnime->genres()->sync($genreId);
+        }
     }
 
     /**

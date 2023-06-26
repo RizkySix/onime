@@ -28,11 +28,35 @@ class AnimeVideoController extends Controller
     }
 
     /**
+     * Display a listing anime name with video of the resource.
+     */
+    public function show_video(AnimeName $anime_name)
+    {
+       return view('anime.show-anime-video' , [
+        'anime_name' => $anime_name->load(['anime_video' => function ($query) {
+            $query->select('anime_eps', 'id', 'anime_name_id' , 'deleted_at');
+        }])
+       ]);
+    }
+
+    /**
+     * Display a listing anime name with video of the resource.
+     */
+    public function show_video_trashed(AnimeName $anime_name)
+    {
+       return view('anime.show-anime-video-trashed' , [
+        'anime_name' => $anime_name->load(['anime_video' => function ($query) {
+            $query->onlyTrashed()->select('anime_eps', 'id', 'anime_name_id' , 'deleted_at');
+        }])
+       ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('anime-videos');
+        return view('anime.add-anime-video');
     }
 
     /**
@@ -50,7 +74,7 @@ class AnimeVideoController extends Controller
             $newAnime = $findAnime->values()->first(); //id
          
             if ($animeName == null) {
-                return back()->with('no-match', 'not match');
+                return back()->with('no-match', 'Anime Not Found');
             }
 
             $directory = 'F-' . $animeName;
@@ -102,7 +126,7 @@ class AnimeVideoController extends Controller
            
           
         }else{
-            return back()->with('no-match', 'not match');
+            return back()->with('no-match', 'Anime Not Found');
         }
     }
 
@@ -268,7 +292,7 @@ class AnimeVideoController extends Controller
                                     ->pluck('anime_eps');
 
         if($findDuplicate->values()->first() != null){
-            return back()->with('duplicate-found' , 'Duplicate Name Found');
+            return back()->with('info' , 'Duplicate Name Found');
         }
         
           //call observer
@@ -288,7 +312,7 @@ class AnimeVideoController extends Controller
                                                                         '/' . $clearVidName . "')")
          , 'anime_eps' => $clearVidName]);
 
-        return back();
+        return back()->with('info' , 'Success Updating');
     }
 
     /**
@@ -314,7 +338,7 @@ class AnimeVideoController extends Controller
             $softDeleted->restore();
         }
 
-        return back();
+        return back()->with('info' , 'Success Untrash');
      }
 
      /**
@@ -329,6 +353,6 @@ class AnimeVideoController extends Controller
             $forceDelete->forceDelete();
         }
 
-        return back();
+        return back()->with('info' , 'Success Permanent Delete');
      }
 }

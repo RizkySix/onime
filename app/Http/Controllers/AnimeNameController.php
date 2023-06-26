@@ -23,14 +23,37 @@ class AnimeNameController extends Controller
         $animes = AnimeName::with(['genres:genre_name'])->withCount('anime_video as total_video');
 
         if($request->order_anime_name == 'vip'){
-            $animes = $animes->orderBy('vip' , 'DESC')->get();
+            $animes = $animes->orderBy('vip' , 'DESC')->paginate(10)->withQueryString();
         }elseif($request->order_anime_name == 'non-vip'){
-            $animes = $animes->orderBy('vip' , 'ASC')->get();
+            $animes = $animes->orderBy('vip' , 'ASC')->paginate(10)->withQueryString();
         }else{
-            $animes = $animes->get();
+            $animes = $animes->paginate(10)->withQueryString();
         }
 
         return view('anime.all-anime-view' , [
+            'anime_name' => $animes
+        ]);
+    }
+
+     /**
+     * Display a trashed anime listing of the resource.
+     */
+    public function trashed_anime(Request $request)
+    {
+
+        $animes = AnimeName::with(['genres:genre_name' , 'anime_video' => function($query){
+            $query->onlyTrashed()->select('id' , 'anime_name_id');
+        }])->onlyTrashed();
+
+        if($request->order_anime_name == 'vip'){
+            $animes = $animes->orderBy('vip' , 'DESC')->paginate(10)->withQueryString();
+        }elseif($request->order_anime_name == 'non-vip'){
+            $animes = $animes->orderBy('vip' , 'ASC')->paginate(10)->withQueryString();
+        }else{
+            $animes = $animes->paginate(10)->withQueryString();
+        }
+
+        return view('anime.all-trashed-anime-view' , [
             'anime_name' => $animes
         ]);
     }
@@ -149,7 +172,7 @@ class AnimeNameController extends Controller
           return $newAnime;
        }
 
-       return redirect()->route('anime-videos.create' , ['anime-name' => $slug]);
+       return redirect()->route('anime-videos.create' , ['anime-name' => $clearAnimeName , 'anime-slug' => $slug]);
 
        
     }
@@ -204,9 +227,7 @@ class AnimeNameController extends Controller
     public function edit(AnimeName $anime_name)
     {
         return view('anime.edit-anime' , [
-            'anime_name' => $anime_name->load(['anime_video' => function ($query) {
-                $query->withTrashed()->select('anime_eps', 'id', 'anime_name_id' , 'deleted_at');
-            }, 'genres' => function ($query) {
+            'anime_name' => $anime_name->load(['genres' => function ($query) {
                 $query->select('genre_name' , 'id');
             }])
         ]);
@@ -248,10 +269,13 @@ class AnimeNameController extends Controller
        ]);
       
        //update pivot table
-       $validatedData['genre'] = array_filter($validatedData['genre']);//kode disamping sementara sampai UI dibuat
-       $anime_name->genres()->sync($validatedData['genre']);
+       //$validatedData['genre'] = array_filter($validatedData['genre']);//kode disamping sementara sampai UI dibuat
+       //$anime_name->genres()->sync($validatedData['genre']);
 
-       return redirect()->route('anime-name.index');
+        $genreStore = new GenreController;
+        $genreStore->store($validatedData['genre'] , $anime_name , 'from anime update');
+
+       return back();
 
     }
 
@@ -262,7 +286,7 @@ class AnimeNameController extends Controller
     {
         AnimeName::destroy($anime_name->id);
 
-        return back();
+        return back()->with('info' , 'Trashed');
     }
 
     /**
@@ -276,7 +300,7 @@ class AnimeNameController extends Controller
             $softDeleted->restore();
         }
 
-        return back();
+        return back()->with('info','Success Untrash');
     }
 
      /**
@@ -291,7 +315,7 @@ class AnimeNameController extends Controller
             $forceDelete->forceDelete();
         }
 
-        return back();
+        return back()->with('info' , 'Permanent Deleted');
     }
     
 }

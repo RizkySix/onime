@@ -31,7 +31,7 @@
                           </div>
                          <div class="col-sm-5">
                           <label for="released_date" class="form-label">Released Date</label>
-                          <input type="text" name="released_date" id="released_date" placeholder="Released Date Goes Here" class="form-control" required value="{{ old('released_date') }}">
+                          <input type="text" name="released_date" id="released_date" placeholder="Released Date Goes Here" class="form-control" value="{{ old('released_date') }}">
                           @error('released_date')
                           <span style="color:red" class="error-msg">{{ $message }}</span>
                       @enderror
