@@ -13,10 +13,40 @@ class GenreController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $allGenre = Genre::withTrashed()->with(['anime_name:anime_name'])->latest()->get();
+        $allGenre = Genre::with(['anime_name:anime_name,slug'])->withCount('anime_name as related_anime');
+
+        if($request->order_related_anime == 'related-desc'){
+            $allGenre = $allGenre->orderBy('related_anime' , 'DESC')->paginate(10)->withQueryString();
+        }elseif($request->order_related_anime == 'related-asc'){
+            $allGenre = $allGenre->orderBy('related_anime' , 'ASC')->paginate(10)->withQueryString();
+        }else{
+            $allGenre = $allGenre->latest()->paginate(10)->withQueryString();
+        }
+
         return view('genre.view' , [
+            'genres' => $allGenre
+        ]);
+    }
+
+
+    /**
+     * Display a trahsed genre listing of the resource.
+     */
+    public function trashed_genre(Request $request)
+    {
+        $allGenre = Genre::with(['anime_name:anime_name,slug'])->withCount('anime_name as related_anime')->onlyTrashed();
+
+        if($request->order_related_anime == 'related-desc'){
+            $allGenre = $allGenre->orderBy('related_anime' , 'DESC')->paginate(10)->withQueryString();
+        }elseif($request->order_related_anime == 'related-asc'){
+            $allGenre = $allGenre->orderBy('related_anime' , 'ASC')->paginate(10)->withQueryString();
+    }else{
+            $allGenre = $allGenre->latest()->paginate(10)->withQueryString();
+        }
+
+        return view('genre.trashed-view' , [
             'genres' => $allGenre
         ]);
     }
@@ -129,7 +159,7 @@ class GenreController extends Controller
     {
         Genre::destroy($genre->id);
         
-        return back();
+        return back()->with('found-genre' , 'Success Trashed');
     }
 
       /**
@@ -143,7 +173,7 @@ class GenreController extends Controller
             $softDeleted->restore();
         }
 
-        return back();
+        return back()->with('found-genre' , 'Success Untrash');
     }
 
      /**
@@ -160,6 +190,6 @@ class GenreController extends Controller
             $forceDelete->anime_name()->detach();
         }
 
-        return back();
+        return back()->with('found-genre' , 'Permanent Deleted');
     }
 }

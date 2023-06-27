@@ -17,6 +17,16 @@ class PricingPolicy
     }
 
     /**
+     * Determine whether the user non admin view the models.
+     */
+    public function viewAdmin(User $user): Response
+    {
+        return $user->admin == true
+        ? Response::allow()
+        : Response::denyAsNotFound();
+    }
+
+    /**
      * Determine whether the user can view the model.
      */
     public function view(User $user, Pricing $pricing): Response

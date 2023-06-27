@@ -85,5 +85,14 @@ class DashboardController extends Controller
                                     ->count()
       ]);
    }
+
+
+   public function user_order()
+   {
+      $orders =  PricingOrder::with(['user:id,name,email'])->latest()->get();
+      return view('user.user-order' , [
+         'orders' => $orders
+      ]);
+   }
    
 }

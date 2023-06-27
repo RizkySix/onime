@@ -15,6 +15,9 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Account</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="">Orders</a>
+          </li>
          
         </ul>
         <form class="d-flex" role="search">

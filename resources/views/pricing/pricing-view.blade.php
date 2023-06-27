@@ -5,16 +5,16 @@
 
     <div class="container" style="margin-top: 50px;">
         <div class="row">
-            <div class="col-sm-8 m-auto">
+            <div class="col-sm-12 m-auto">
                 <div class="header mb-4">
                  <h3 class="text-center">
                     Pricing List
                  </h3>
                 </div>
 
-                <div class="pricing-list d-flex justify-content-around mb-4">
+                <div class="pricing-list d-flex justify-content-around flex-wrap mb-4">
                   @foreach ($pricings as $pricing)
-                  <div class="card" style="width: 24rem;">
+                  <div class="card mb-4" style="width: 24rem;">
                     <img src="/asset-img/soft-bg.jpg" class="card-img-top" alt="rusak">
                     <div class="card-body d-flex flex-column">
                       <h3 class="card-title">{{ $pricing->pricing_name }}</h3>

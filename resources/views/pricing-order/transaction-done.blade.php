@@ -11,7 +11,7 @@
                     {{ strtoupper($order->transaction_status) }}
                 </span>
                 <p class="text-muted text-center">
-                    @if ($order->transaction_status != 'settlement' || $order->transaction_status != 'capture')
+                    @if ($order->transaction_status != 'settlement' && $order->transaction_status != 'capture')
                     Segera lakukan pembayaran ke <span class="fw-bold">{{ strtoupper($order->payment_type) }}</span> dengan nomor pembayaran <span class="fw-bold">{{ strtoupper($order->payment_number) }}</span>
 
                     @else
@@ -19,13 +19,17 @@
                     @endif
                 </p>
 
+                @if ($order->transaction_status != 'settlement' && $order->transaction_status != 'capture')
                 <div class="ms-auto" style="font-size: 12px;">
                   @if (\Carbon\Carbon::parse($order->transaction_time)->addHours(24)->diffInHours() >= 1)
                   <span class="text-muted">Pembayaran gagal dalam <span class="fw-bold">{{ \Carbon\Carbon::parse($order->transaction_time)->addHours(24)->diffInHours() }} jam</span></span>
+                  @elseif(\Carbon\Carbon::parse($order->transaction_time)->addHours(24) <= \Carbon\Carbon::now())
+                  <span class="text-muted">Order telah expired (gagal)</span></span>
                   @else
                   <span class="text-muted">Pembayaran gagal dalam <span class="fw-bold">{{ \Carbon\Carbon::parse($order->transaction_time)->addHours(24)->diffInMinutes() }} menit</span></span>
                   @endif
                 </div>
+                @endif
                 <hr>
                 <div class="text-center">
                     <span>Order Id :</span> <br>

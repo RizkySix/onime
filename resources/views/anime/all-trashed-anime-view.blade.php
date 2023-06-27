@@ -84,7 +84,7 @@
                          Author : <span class="fw-bold mb-1">{{ $anime->author }}</span> <br>
                          Released Date : <span class="fw-bold mb-1">{{ $anime->released_date }}</span> <br>
                          Vip : <span class="fw-bold mb-1">{{ $anime->vip == true ? 'YA' : 'TIDAK' }}</span> <br>
-                         Genre : <span class="fw-bold mb-1">{{ $anime->genres->implode('genre_name' , ',') }}</span> 
+                         Genre : <span class="fw-bold mb-1">{{ $anime->genres->implode('genre_name' , ',') }}</span> <br>
                          Description : <br>
                          <div class="card mt-2">
                            <div class="card-body">

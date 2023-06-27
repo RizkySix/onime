@@ -1,18 +1,18 @@
-<x-bootsrap.main-view title="Genre List">
+<x-bootsrap.main-view title="Trashed Genre List">
     <x-bootsrap.sidebar-admin >
  
           <div class="col-sm-8 m-auto">
             <div class="konten" style="margin-top:50px;">
  
              <div class="navigasi col-sm-5 mb-4 d-flex justify-content-around">
-                <form action="{{ route('genre-trashed') }}" method="GET">
+                <form action="{{ route('genre.index') }}" method="GET">
                    <x-bootsrap.main-button type="sumbit">
-                     Trashed Genre
+                    Published Genre
                    </x-bootsrap.main-button>
                 </form>
  
  
-                <form action="{{ route('genre.index') }}" method="GET" id="genre-anime-form">
+                <form action="{{ route('genre-trashed') }}" method="GET" id="genre-anime-form">
                    <select name="order_related_anime" id="select-order" class="form-select">
                       <option value="default" 
                       {{ request('order_related_anime') != 'related-desc'|| request('order_related_anime') != 'related-asc' ? 'selected' : '' }}
@@ -44,9 +44,7 @@
                   @foreach ($genres as $genre)
                   <tr>
                      <td >{{ $loop->iteration }}</td>
-                        <form action="/genre/{{ $genre->genre_name }}" method="POST">
-                            @csrf
-                            @method('put')
+                       
                             <td ><input type="text" name="genre_name" class="form-control" required placeholder="Genre Name" value="{{ $genre->genre_name }}" style="width: 100px;"></td>
                             <td>{{ $genre->related_anime }} Anime</td>
                             <td class="d-flex">
@@ -54,18 +52,20 @@
                                   &#128065
                                </button>
 
-                               <button class="btn btn-warning me-2" style="border: 1px solid black;">
-                                &#9998
-                            </button>
-                        </form>
+                            <form action="/genre-restore/{{ $genre->genre_name }}" method="POST">
+                                @csrf
+                                <button class="btn btn-primary me-2" style="border: 1px solid black;">
+                                    &#9741
+                                </button>
+                           
+                            </form>
  
                      
  
-                        <form action="/genre/{{ $genre->genre_name }}" method="POST">
+                        <form action="/genre-force-delete/{{ $genre->genre_name }}" method="POST">
                            @csrf
-                           @method('delete')
                            <button class="btn btn-danger" style="border: 1px solid black;">
-                              &#x1F5D1
+                            &#9851
                            </button>
                            </form>
                      </td>

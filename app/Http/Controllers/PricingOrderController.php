@@ -204,6 +204,15 @@ class PricingOrderController extends Controller
     }
 
      /**
+     * Midtrans api cancel order.
+     */
+    public function delete_cancel_order(PricingOrder $pricing_order)
+    {
+        PricingOrder::destroy($pricing_order->id);
+        return back()->with('status' , 'Canceled Order Deleted');
+    }
+
+     /**
      * Midtrans get transaction status.
      */
     public function get_transaction_status($order_id)
@@ -355,7 +364,7 @@ class PricingOrderController extends Controller
         }
         });
 
-       return redirect()->route('transaction_done' , $data_order['order_id'])->with('status' , $message);
+       return redirect()->route('transaction-done' , $data_order['order_id'])->with('status' , $message);
 
     }
 

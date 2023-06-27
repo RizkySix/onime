@@ -31,6 +31,31 @@ class PricingController extends Controller
         ]);
     }
 
+
+     /**
+     * Display a listing for admin of the resource.
+     */
+    public function pricing_list_admin()
+    { 
+        $pricings = Pricing::select('id' , 'pricing_name' , 'vip_power' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->get();
+        return view('pricing.pricing-list-admin' , [
+            'pricings' => $pricings,
+        ]);
+    }
+
+
+     /**
+     * Display a trashed listing for admin of the resource.
+     */
+    public function trashed_pricing_list_admin()
+    { 
+        $pricings = Pricing::select('id' , 'pricing_name' , 'vip_power' , 'price' , 'discount' , 'duration' , 'description' , 'deleted_at')->onlyTrashed()->get();
+        return view('pricing.trashed-pricing' , [
+            'pricings' => $pricings,
+        ]);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -90,7 +115,7 @@ class PricingController extends Controller
     {
         Pricing::destroy($pricing->id);
 
-        return back()->with('success' , 'Pricing Deleted');
+        return back()->with('success' , 'Pricing Trashed');
     }
 
      /**
@@ -104,7 +129,7 @@ class PricingController extends Controller
             $softDeleted->restore();
         }
 
-        return back();
+        return back()->with('success' , 'Pricing Untrash');
     }
 
      /**
@@ -118,6 +143,6 @@ class PricingController extends Controller
             $forceDelete->forceDelete();
         }
 
-        return back();
+        return back()->with('success' , 'Permanent Deleted');
     }
 }

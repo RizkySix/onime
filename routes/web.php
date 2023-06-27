@@ -45,11 +45,14 @@ Route::middleware(['admin'])->group(function () {
     Route::post('/anime-videos-force-delete/{id}' , [AnimeVideoController::class , 'force_delete'])->name('anime-videos-force-delete');
  
     Route::resource('/genre', GenreController::class);
+    Route::get('/genre-list/trashed' , [GenreController::class , 'trashed_genre'])->name('genre-trashed');
     Route::post('/genre-restore/{genre_name}' , [GenreController::class , 'restore'])->name('genre-restore');
     Route::post('/genre-force-delete/{genre_name}' , [GenreController::class , 'force_delete'])->name('genre-force-delete');
 });
 
     Route::resource('/pricing', PricingController::class);
+    Route::get('/pricing-list-admin', [PricingController::class , 'pricing_list_admin'])->name('pricing.admin')->middleware('can:viewAdmin,App\Models\Pricing');
+    Route::get('/pricing-list-admin/trashed', [PricingController::class , 'trashed_pricing_list_admin'])->name('pricing.admin-trashed')->middleware('can:viewAdmin,App\Models\Pricing');
     Route::post('/pricing-restore/{pricing_name}', [PricingController::class , 'restore'])->name('pricing.restore')->middleware('can:restore,App\Models\Pricing');
     Route::post('/pricing-force-delete/{pricing_name}', [PricingController::class , 'force_delete'])->name('pricing.force-delete')->middleware('can:forceDelete,App\Models\Pricing');
 
@@ -59,12 +62,17 @@ Route::middleware(['customer'])->group(function() {
     Route::get('/dashboard' , [DashboardController::class , 'view'])->name('dashboard');
     Route::post('/generate-token' , [DashboardController::class , 'generate_token'])->name('token-maker');
 
+    Route::get('/user-orders' , [DashboardController::class , 'user_order'])->name('user.orders');
+
     Route::get('/transaction-view/{pricing_name}' , [PricingOrderController::class , 'transaction_view'])->name('transaction-view');
    Route::post('/transaction/{pricing_name}' , [PricingOrderController::class , 'transaction'])->name('transaction');
    Route::get('/transaction-done/{pricing_order}' , [PricingOrderController::class , 'transaction_done'])->name('transaction-done');
    Route::post('/cancel-order/{pricing_order}' , [PricingOrderController::class , 'cancel_order'])->name('cancel-order');
+   Route::delete('/cancel-order-delete/{pricing_order}' , [PricingOrderController::class , 'delete_cancel_order'])->name('cancel-order-delete');
    Route::get('/change-payment-method/{pricing_order}/edit' , [PricingOrderController::class , 'change_payment_method_view'])->name('change-payment-method-view');
    Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method');
+
+  
 });
 
 });
