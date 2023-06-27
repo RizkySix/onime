@@ -37,7 +37,11 @@
             @if (session('info'))
             <h5 class="fw-bold text-center" style="color:red">{{ session('info') }}</h5>
             @endif
-
+            @if (session('info-success'))
+            <h5 class="fw-bold text-center" style="color:rgb(204, 129, 129)">
+               {{ session('info-success') }}
+            </h5>
+            @endif
             <table class="table">
                <thead>
                  <tr>

@@ -105,7 +105,7 @@ class PricingController extends Controller
 
         Pricing::where('id' , $pricing->id)->update($validatedData);
 
-        return back()->with('success' , 'Pricing Updated');
+        return redirect()->route('pricing.admin')->with('success-edit' , 'Pricing Updated');
     }
 
     /**

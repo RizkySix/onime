@@ -89,7 +89,7 @@ class DashboardController extends Controller
 
    public function user_order()
    {
-      $orders =  PricingOrder::with(['user:id,name,email'])->latest()->get();
+      $orders =  PricingOrder::with(['user:id,name,email'])->where('user_id' , auth()->user()->id)->latest()->get();
       return view('user.user-order' , [
          'orders' => $orders
       ]);

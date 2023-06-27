@@ -275,7 +275,7 @@ class AnimeNameController extends Controller
         $genreStore = new GenreController;
         $genreStore->store($validatedData['genre'] , $anime_name , 'from anime update');
 
-       return back();
+       return redirect()->route('anime-name.index')->with('info-success' , 'Success Update');
 
     }
 

@@ -6,6 +6,8 @@ use App\Models\AnimeName;
 use App\Models\AnimeRating;
 use App\Models\AnimeVideo;
 use App\Models\AnimeVideoShort;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,6 +20,7 @@ class AnimeNameObserver
     {
         //buat rating untuk anim baru
         AnimeRating::create(['anime_name_id' => $animeName->id]);
+
     }
 
     /**
@@ -25,7 +28,7 @@ class AnimeNameObserver
      */
     public function updated(AnimeName $animeName): void
     {
-        
+      
     }
 
      /**
@@ -34,6 +37,21 @@ class AnimeNameObserver
 
      public function no_event_updated(AnimeName $animeName , $oldName , $newName): void
      {
+
+      //forget semua cache
+      Cache::forget('all-anime-no-query');
+      Cache::forget('all-anime-find-rating*');
+      Cache::forget('all-anime-rating');
+      Cache::forget('all-anime-find*');
+
+      Cache::forget('all-anime-no-query-page*');
+      Cache::forget('all-anime-find-rating-page*');
+      Cache::forget('all-anime-rating-page*');
+      Cache::forget('all-anime-find-page*');
+      //Cache::tags(['all-anime'])->flush();
+     // Cache::flush();
+  
+      
         //mengatur ulang url video dan storage relasi model AnimeName
           DB::table('anime_videos')
              ->where('anime_name_id' , $animeName->id)

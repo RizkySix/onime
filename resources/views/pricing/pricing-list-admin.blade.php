@@ -23,6 +23,11 @@
              @if (session('success'))
              <h5 class="fw-bold text-center" style="color:red">{{ session('success') }}</h5>
              @endif
+             @if (session('success-edit'))
+             <h5 class="fw-bold text-center" style="color:rgb(204, 129, 129)">
+                {{ session('success-edit') }}
+             </h5>
+             @endif
     
  
              <table class="table">
