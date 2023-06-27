@@ -44,6 +44,7 @@ class AllAnimeController extends Controller
        if($request->rating == 'true' && $request->find_anime){
             $queryAnime = $fetchAnime->where('anime_name' , 'LIKE' , '%' . $request->find_anime . '%')
             ->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
+
            $request->page ?
                 $allAnime = Cache::remember('all-anime-find-rating-page' . $request->find_anime . $request->page , 60*60*24 , function() use($queryAnime) {
                     return $queryAnime->simplePaginate(10);
@@ -54,6 +55,7 @@ class AllAnimeController extends Controller
             
        }elseif($request->rating == 'true'){ //jika dicari rating tertinggi
             $queryAnime = $fetchAnime->orderByDesc(AnimeRating::select('rating')->whereColumn('anime_ratings.anime_name_id' , 'anime_names.id'));
+
             $request->page ?
                 $allAnime = Cache::remember('all-anime-rating-page' . $request->page , 60*60*24 , function() use($queryAnime) {
                     return $queryAnime->simplePaginate(10);
@@ -64,6 +66,7 @@ class AllAnimeController extends Controller
        }elseif($request->find_anime){ // jika dicari dari nama anime
             $queryAnime = $fetchAnime->where('anime_name' , 'LIKE' , '%' . $request->find_anime . '%')
             ->latest();
+
            $request->page ?
                 $allAnime = Cache::remember('all-anime-find-page' . $request->find_anime . $request->page , 60*60*24 , function() use($queryAnime) {
                     return $queryAnime->simplePaginate(10);
@@ -73,6 +76,7 @@ class AllAnimeController extends Controller
         });
         }else{ //jika tidak ada query parameter
             $queryAnime = $fetchAnime->latest();
+            
             $request->page ?
                 $allAnime =  Cache::remember('all-anime-no-query-page' . $request->page , 60*60*24 , function () use($queryAnime) {
                     return $queryAnime->simplePaginate(10);
