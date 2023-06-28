@@ -17,8 +17,8 @@ class CustomGlobalMiddleware
     public function handle(Request $request, Closure $next): Response
     {
       
-        delete_expired_otp();
-        expired_vip();
+       /*  delete_expired_otp();
+        expired_vip(); */
         return $next($request);
     }
 }

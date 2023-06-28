@@ -275,6 +275,9 @@ class AnimeNameController extends Controller
         $genreStore = new GenreController;
         $genreStore->store($validatedData['genre'] , $anime_name , 'from anime update');
 
+        //forget semua cache -> Sementara menggunakan cache database, otw belajar redis
+     DB::table('cache')->where('key' , 'LIKE'  , '%onime_cache_all-anime%' )->delete();
+        
        return redirect()->route('anime-name.index')->with('info-success' , 'Success Update');
 
     }

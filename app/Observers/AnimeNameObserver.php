@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Storage;
 
 class AnimeNameObserver
 {
+  public function __construct()
+  {
+     //forget semua cache -> Sementara menggunakan cache database, otw belajar redis
+     DB::table('cache')->where('key' , 'LIKE'  , '%onime_cache_all-anime%' )->delete();
+     
+  }
+
     /**
      * Handle the AnimeName "created" event.
      */
@@ -37,20 +44,6 @@ class AnimeNameObserver
 
      public function no_event_updated(AnimeName $animeName , $oldName , $newName): void
      {
-
-      //forget semua cache
-      Cache::forget('all-anime-no-query');
-      Cache::forget('all-anime-find-rating*');
-      Cache::forget('all-anime-rating');
-      Cache::forget('all-anime-find*');
-
-      Cache::forget('all-anime-no-query-page*');
-      Cache::forget('all-anime-find-rating-page*');
-      Cache::forget('all-anime-rating-page*');
-      Cache::forget('all-anime-find-page*');
-      //Cache::tags(['all-anime'])->flush();
-     // Cache::flush();
-  
       
         //mengatur ulang url video dan storage relasi model AnimeName
           DB::table('anime_videos')

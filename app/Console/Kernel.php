@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\ExpiredOtpDelete;
 use App\Jobs\UpdateExpiredVip;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,7 +18,8 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         //membuat daily schedule untuk update abilites token, pada pukul 12 malam
-        $schedule->job(new UpdateExpiredVip())->dailyAt('00:00');
+        $schedule->job(new UpdateExpiredVip())->everyTwoHours();
+        $schedule->job(new ExpiredOtpDelete())->twiceDaily(1 , 13);
     }
 
     /**
