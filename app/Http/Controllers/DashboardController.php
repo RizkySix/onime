@@ -34,7 +34,7 @@ class DashboardController extends Controller
       $tokenCreated = DB::table('personal_access_tokens')->where('tokenable_id' , $user->id)->pluck('created_at');
      
       //membatasi supaya user hanya bisa generate token hanya 1x24 jam
-      if(Carbon::now() < Carbon::parse($tokenCreated->values()->first())->addHours(24)){
+      if($tokenCreated->values()->first() !== null && Carbon::now() < Carbon::parse($tokenCreated->values()->first())->addHours(24)){
          return back()->with('limit' , 'Generate Token Once Per Day!');
       }
 

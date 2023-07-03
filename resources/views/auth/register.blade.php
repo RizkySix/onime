@@ -24,20 +24,33 @@
                                 <label for="name" class="form-label">Your Name</label>
                                 <input type="text" name="name" class="form-control" placeholder="Dek Suka" required>
                             </div>
+                            @error('name')
+                                {{ $message }}
+                            @enderror
 
                             <div class="email mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" name="email" class="form-control" placeholder="kawai@mail" required>
                             </div>
+                            @error('email')
+                            {{ $message }}
+                        @enderror
+
                             <div class="password mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
+                            @error('password')
+                            {{ $message }}
+                        @enderror
 
-                            <div class="password-confirmation mb-3">
-                                <label for="password-confirmation" class="form-label">Confirmation Password</label>
-                                <input type="password" name="password-confirmation" class="form-control" required>
+                            <div class="password_confirmation mb-3">
+                                <label for="password_confirmation" class="form-label">Confirmation Password</label>
+                                <input type="password" name="password_confirmation" class="form-control" required>
                             </div>
+                            @error('password_confirmation')
+                            {{ $message }}
+                        @enderror
                         <x-bootsrap.main-button class="w-100 mb-3" type="submit">
                             Register
                          </x-bootsrap.main-button>

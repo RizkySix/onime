@@ -17,21 +17,27 @@
                     <form action="{{ route('token-maker') }}" method="POST">
                         @csrf
                             
+                        @if ($auth->token)
                         <div class="timer">
-                        @if (\Carbon\Carbon::now() > \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1))
+                            @if (\Carbon\Carbon::now() > \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1))
+                            <h6 class="text-muted ms-auto col-sm-4 mt-2">
+                                Generate Token Tersedia  
+                            </h6>
+                            @elseif(\Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1)->diffInHours() >= 1)
+                            <h6 class="text-muted ms-auto col-sm-4 mt-2">
+                              Generate kembali dalam {{ \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1)->diffInHours() }} jam
+                            </h6>
+                            @else
+                            <h6 class="text-muted ms-auto col-sm-4 mt-2">
+                            Generate kembali dalam {{ \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1)->diffInMinutes() }} menit
+                            </h6>
+                            @endif
+                              </div>
+                        @else
                         <h6 class="text-muted ms-auto col-sm-4 mt-2">
                             Generate Token Tersedia  
                         </h6>
-                        @elseif(\Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1)->diffInHours() >= 1)
-                        <h6 class="text-muted ms-auto col-sm-4 mt-2">
-                          Generate kembali dalam {{ \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1)->diffInHours() }} jam
-                        </h6>
-                        @else
-                        <h6 class="text-muted ms-auto col-sm-4 mt-2">
-                        Generate kembali dalam {{ \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1)->diffInMinutes() }} menit
-                        </h6>
                         @endif
-                          </div>
                         <div class="input-group">
                             <input type="text" class="form-control text-center" value="{{ $auth->token }}" placeholder="Generate your bearer token" readonly style="height: 70px; font-size:21px;">
                           <x-bootsrap.main-button type="submit">
