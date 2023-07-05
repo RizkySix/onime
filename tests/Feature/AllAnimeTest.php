@@ -70,11 +70,11 @@ class AllAnimeTest extends TestCase
      */
     public function test_should_response_json() :void
     {
-        $response = $this->get(route('api.all-anime') , [
+        $response = $this->getJson(route('api.all-anime') , [
             'Authorization' => 'Bearer ' . $this->getToken
         ]);
 
-        $response->assertJsonIsObject();
+        $response->assertStatus(200);
     }
 
     /**

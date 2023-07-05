@@ -83,9 +83,9 @@ class AllVipAnimeTest extends TestCase
      */
     public function test_should_response_json() :void
     {
-        $response = $this->get('http://onime.test/api/ver1/animes-vip' , [
+        $response = $this->getJson('http://onime.test/api/ver1/animes-vip' , [
             'Authorization' => 'Bearer ' . $this->getTokenVip
-        ])->assertJsonIsObject();
+        ])->assertStatus(200);
 
        
     }

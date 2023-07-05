@@ -45,6 +45,7 @@ class AdminPricingTest extends TestCase
           $this->actingAs($this->nonAdmin)->put(route('pricing.update' , $pricing['pricing_name']) , $pricing)->assertStatus(404);
           $this->actingAs($this->nonAdmin)->delete(route('pricing.destroy' , $pricing['pricing_name']))->assertStatus(404);
           $this->actingAs($this->nonAdmin)->post(route('pricing.restore' , $pricing['pricing_name']))->assertStatus(404);
+          $this->actingAs($this->nonAdmin)->post(route('pricing.force-delete' , $pricing['pricing_name']))->assertStatus(404);
 
           //non admin bisa akses route berikut
          $this->actingAs($this->nonAdmin)->get(route('pricing.index'))->assertStatus(200);
@@ -283,6 +284,26 @@ class AdminPricingTest extends TestCase
        $forceDeletedPricingNotAppearAdminView->assertDontSee($pricing->pricing_name); //case 
     }
 
+
+     /**
+     * @group admin-pricing-test
+     */
+    public function test_admin_cant_create_duplicate_pricing_name_even_it_sofdeleted() : void
+    {
+        $pricing = Pricing::factory()->create([
+            'pricing_name' => 'Mega vip'
+        ]);
+
+        $response = $this->actingAs($this->admin)->delete(route('pricing.destroy' , $pricing->pricing_name));
+        $trashedPricing = Pricing::onlyTrashed()->first();
+        $this->assertEquals($pricing->pricing_name ,  $trashedPricing->pricing_name);
+
+        //tidak akan bisa membuat pricing dengan nama sama karena pricing name tersebut masih status softdelete
+        $failCreatePricing = $this->actingAs($this->admin)->post(route('pricing.store') , $pricing->toArray())->assertStatus(302);
+        
+        $failCreatePricing->assertInvalid(['pricing_name']);
+       
+    }
 
 
     private function createUserRole(bool $roleAdmin = false) : User
