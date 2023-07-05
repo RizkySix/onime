@@ -41,7 +41,7 @@ class ShowAnimeTest extends TestCase
         DB::table('genres')->insert($insertGenre);
        
         //buat anime
-       for($i = 1; $i <= 5; $i++){
+       for($i = 1; $i <= 20; $i++){
         $animeCreate = AnimeName::withoutEvents(function() {
             $animeNew = AnimeName::create([
                     'anime_name' => rand().'rizky',
@@ -265,7 +265,7 @@ class ShowAnimeTest extends TestCase
      /**
      * @group api-show-anime
      */
-    public function test_order_by_rating_true() : void
+    public function test_order_genre_by_rating_true() : void
     {
         $getGenreName = Genre::select('genre_name')->first();
         $response = $this->get('http://onime.test/api/ver1/genres/' . $getGenreName->genre_name . '?rating=true'  , [
@@ -297,7 +297,8 @@ class ShowAnimeTest extends TestCase
             $new_rating = $rating;
             arsort($rating);
 
-            implode(' ' , $new_rating) == implode(' ' , $rating) ? $response->assertOk() : $response->assertInvalid();
+            $this->assertEquals(implode(' ' , $new_rating) , implode(' ' , $rating));
+           
         }
         
         

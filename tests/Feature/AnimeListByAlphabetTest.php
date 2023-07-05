@@ -93,8 +93,9 @@ class AnimeListByAlphabetTest extends TestCase
 
         $data = $response->json();
         $oneMonthAnime = $data['animes'];
-        count($oneMonthAnime) == 25 ? : $response->assertInvalid();
       
+        $this->assertEquals(count($oneMonthAnime) , 25);
+
         $animeName = [];
         foreach($oneMonthAnime as $anime){
             $animeName[] = $anime['anime_name'];
@@ -124,7 +125,8 @@ class AnimeListByAlphabetTest extends TestCase
         ])->assertStatus(200);
 
         $data = $response->json();
-        count($data['animes']) == 25 ? : $response->assertInvalid();
+      
+        $this->assertEquals(count($data['animes']) , 25);
     }
 
      /**
@@ -154,8 +156,8 @@ class AnimeListByAlphabetTest extends TestCase
             $findValidDate = AnimeName::whereIn('anime_name' , $animeName)->select('vip')->get();
             $animeData = $findValidDate->values()->toArray();
         
-            foreach($animeData as $dataAnime){
-                $dataAnime['vip'] == false ? : $response->assertInvalid();
+            foreach($animeData as $animeDetail){
+                $animeDetail['vip'] == false ? : $response->assertInvalid();
             }
        }
         

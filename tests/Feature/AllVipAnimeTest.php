@@ -172,11 +172,8 @@ class AllVipAnimeTest extends TestCase
     
             arsort($ratings);
             
-            if(implode(' ' , $newRating) === implode(' ' , $ratings)){
-                $response->assertOk();
-            }else{
-                $response->assertInvalid();
-            }
+            $this->assertEquals(implode(' ' , $newRating) , implode(' ' , $ratings));
+           
         }
 
         

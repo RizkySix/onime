@@ -123,7 +123,8 @@ class AnimeRatingTest extends TestCase
         $currentRatimgShould = 20 / 3; // point sebelumnya ada 10 kemudian ditambah 10 menjadi 20, pariticapn sebelumnya adalah 2 ditambah 1 jadi 3
         $currentRatimgShould = sprintf('%.1f' , $currentRatimgShould);
 
-        $currentRatimgShould == $anime->rating->rating ? : $response->assertInvalid();
+        $this->assertEquals($anime->rating->rating , $currentRatimgShould);
+       
 
        
     }
