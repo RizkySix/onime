@@ -66,7 +66,8 @@ class UpdateExpiredVip implements ShouldQueue
 
      }); 
 
-     DB::statement($query); //query mentah seperti ini bisa di execute dengan DB::statement()
+    //query mentah seperti ini bisa di execute dengan DB::statement()
+    $query == null ? :  DB::statement($query); 
 
      //update seluruh tooken yang tidak berlanggana  VIP menjadi normal token
      DB::table('personal_access_tokens')->whereNotIn('tokenable_id' , array_keys($newAbilities))->update(['abilities' => '["normal-token"]' ]);     
