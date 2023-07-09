@@ -25,7 +25,7 @@ class NormalTokenLimiter
         {
             $timeHits = Cache::get($cacheKey , 1);
 
-            if($timeHits > 5000) // maksisal timehits ke masing-masing endpoint 5000 kali perhari
+            if($timeHits > 5000) // maksimal timehits ke masing-masing endpoint 5000 kali perhari
             {
                 return response()->json([
                     'status' => false,

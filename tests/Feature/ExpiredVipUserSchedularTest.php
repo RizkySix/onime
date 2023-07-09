@@ -16,12 +16,7 @@ use Tests\TestCase;
 class ExpiredVipUserSchedularTest extends TestCase
 {
     use RefreshDatabase;
-  
-    protected function setUp(): void
-    {
-        parent::setUp();
-       
-    }
+ 
     /**
      * @group schedular-test
      */

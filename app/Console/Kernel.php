@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         //membuat daily schedule untuk update abilites token, pada pukul 12 malam
-        $schedule->job(new UpdateExpiredVip())->everyMinute();
+        $schedule->job(new UpdateExpiredVip())->everyTwoHours();
         $schedule->job(new ExpiredOtpDelete())->twiceDaily(1 , 13);
     }
 

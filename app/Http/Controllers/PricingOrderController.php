@@ -35,7 +35,7 @@ class PricingOrderController extends Controller
          $min = 1241573291;
          $max = 9999999999;
          $number = mt_rand($min , $max);
-         $number = sprintf('%010d' , $number);
+         $number = sprintf('%010d' , $number);//agar otomatis generate 10 digit angka
          $orderId = strtoupper(Str::random(5)) . $number;
          
          //gross amount berdasarkan diskon
@@ -106,7 +106,7 @@ class PricingOrderController extends Controller
      * Midtrans make orders.
      */
     public function transaction(Request $request , Pricing $pricing_name)
-    {
+    {  
         $data_order = json_decode($request->order , true);
       
         $vaNumber = 'unknown';
@@ -189,7 +189,7 @@ class PricingOrderController extends Controller
         ->post('https://api.sandbox.midtrans.com/v2/' . $pricing_order->order_id . '/cancel');
         
         $arrResponse = json_decode($response , true);
-    
+        return $response;
         $status_code = ['401' , '412' , '404']; //status code untuk error response
         if(in_array($arrResponse['status_code'] , $status_code)){
             $message = 'Failed to cancel the order, still willing ? please wait until the order expires'  ;
@@ -379,7 +379,7 @@ class PricingOrderController extends Controller
     
         $combineStr = $request->order_id . $request->status_code . $request->gross_amount . env('MIDTRANS_SERVERKEY');
         $validationResponseKey = hash('SHA512' , $combineStr);
-
+       
         DB::beginTransaction();
 
        DB::table('pricing_orders')->where('order_id' , $request->order_id)->lockForUpdate()->get();
