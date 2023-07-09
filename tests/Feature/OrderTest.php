@@ -31,7 +31,7 @@ class OrderTest extends TestCase
     }
   
     /**
-     * @group order-test
+     * @group order-test-customer
      * */  
     public function test_customer_can_access_pricing_list(): void
     {
@@ -43,7 +43,7 @@ class OrderTest extends TestCase
 
 
     /**
-     * @group order-test
+     * @group order-test-customer
      * */  
     public function test_customer_can_purchase_pricing() : void
     {
@@ -57,20 +57,58 @@ class OrderTest extends TestCase
 
      
      /**
-     * @group order-test
+     * @group order-test-customer
      * */  
-    /* public function test_payload_must_be_an_json_string() : void
+    public function test_payload_must_be_an_json_string() : void
     {
-        $sampleData = [
-            'order_id' => 666,
-            'pricing_name' => $this->pricing->pricing_name,
-            'transaction_status' => 'pending' 
+
+      $payload = $this->set_payload(201 , 'pending'); //set status awal pending
+
+        $responseFail = $this->actingAs($this->customer)->post(route('transaction' , $this->pricing->pricing_name) , [
+            'order' => $payload
+        ])->assertStatus(500); //jika yang dikirim bukan string json maka akan muncul error
+
+        //payload harus dirubah menjadi string json agar dapat diolah di controller
+        $payload = json_encode($payload);
+
+        $responseSuccess = $this->actingAs($this->customer)->post(route('transaction' , $this->pricing->pricing_name) , [
+            'order' => $payload
+        ])->assertStatus(302); //redirect
+    }
+
+
+
+    private function set_payload(string $status_code , string $transaction_status) : array
+    {
+        $combine_str = 'PRCZ43455934857' . $status_code . '50000.00' . env('MIDTRANS_SERVERKEY');
+        $signature_key = hash('SHA512' , $combine_str);
+
+        $payload = [
+            "va_numbers" => [
+                [
+                    "va_number" => "82679920479",
+                    "bank" => "bca"
+                ]
+            ],
+            "transaction_time" => "2023-07-08 12:58:14",
+            "transaction_status" => $transaction_status,
+            "transaction_id" => "f73eba60-f968-402c-b438-6e8c6d2712a9",
+            "status_message" => "midtrans payment notification",
+            "status_code" => $status_code,
+            "signature_key" => $signature_key,
+            "payment_type" => "bank_transfer",
+            "payment_amounts" => [
+
+            ],
+            "order_id" => "PRCZ43455934857",
+            "merchant_id" => "G035482679",
+            "gross_amount" => "50000.00", 
+            "fraud_status" => "accept",
+            "expiry_time" => "2023-07-09 12:36:24",
+            "currency" => "IDR"
         ];
 
-        $json = json_encode($sampleData);
-      
-        $response = $this->actingAs($this->customer)->post(route('transaction' , $this->pricing->pricing_name) , [
-            'order' => $json
-        ])->assertStatus(200);
-    } */
+        return $payload;
+    }
+
 }

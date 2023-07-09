@@ -155,7 +155,9 @@ class PricingOrderController extends Controller
             $this->vip_user($pricing_order);
           }
 
-          $realPrice == $data_order['gross_amount'] ? (DB::commit()) . ($message = 'Payment Success') : (DB::rollBack()) . ($message = 'No Match Gross Amount');
+          $realPrice == $data_order['gross_amount'] ? 
+          (DB::commit()) . ($message = 'Payment Success') : 
+          (DB::rollBack()) . ($message = 'No Match Gross Amount');
 
           return redirect()->route('transaction-done' , $pricing_order)->with('payment-success' , $message);
 
@@ -189,7 +191,7 @@ class PricingOrderController extends Controller
         ->post('https://api.sandbox.midtrans.com/v2/' . $pricing_order->order_id . '/cancel');
         
         $arrResponse = json_decode($response , true);
-        return $response;
+       
         $status_code = ['401' , '412' , '404']; //status code untuk error response
         if(in_array($arrResponse['status_code'] , $status_code)){
             $message = 'Failed to cancel the order, still willing ? please wait until the order expires'  ;
@@ -199,6 +201,7 @@ class PricingOrderController extends Controller
             $message = 'Success, order canceled'  ;
         }
 
+        sleep(2);//rentang waktu dua detik sampai order dicancel otomatis pada webhook
         return back()->with('status' , $message);
       
     }
@@ -399,6 +402,11 @@ class PricingOrderController extends Controller
                 $this->vip_user($order);
                 
                 $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
+            }else{
+                return response()->json([
+                    'status' => false , 
+                    'message' => 'status pesanan saat ini tidak dapat memproses perubahan'
+                    ] , 412);
             }
           
         }
@@ -407,16 +415,29 @@ class PricingOrderController extends Controller
         if($request->transaction_status == 'expire' || $request->transaction_status == 'deny'){
           if($order->transaction_status == 'pending'){
             $order->delete();
+            $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
+          }else{
+            return response()->json([
+                'status' => false , 
+                'message' => 'status pesanan saat ini tidak dapat memproses perubahan'
+                ] , 412);
           }
             
-            $order->gross_amount == $request->gross_amount ? DB::commit() : DB::rollBack();
+           
          }
 
          //perbarui status transaksi jika di cancel
-         if($request->transaction_status == 'cancel' && $order->transaction_status == 'pending'){
-            $order->transaction_status = $request->transaction_status;
-            $order->save();
-            DB::commit();
+         if($request->transaction_status == 'cancel'){
+            if($order->transaction_status == 'pending'){
+                $order->transaction_status = $request->transaction_status;
+                $order->save();
+                DB::commit();
+            }else{
+                return response()->json([
+                    'status' => false , 
+                    'message' => 'status pesanan saat ini tidak dapat memproses perubahan'
+                    ] , 412);
+            }
             
          }
 

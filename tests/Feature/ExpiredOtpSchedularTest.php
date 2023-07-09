@@ -20,7 +20,7 @@ class ExpiredOtpSchedularTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-       
+        Carbon::setTestNow('01:00:00');
         $otp = [
             [
             'user_id' => 1,
