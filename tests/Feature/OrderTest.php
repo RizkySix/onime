@@ -83,6 +83,30 @@ class OrderTest extends TestCase
      /**
      * @group order-test-customer
      * */  
+    public function test_only_valid_payment_method_allowed() : void
+    {
+        $payload = $this->set_payload(201 , 'pending' , 'shopeepay'); //payment method yang tidak sesuai (failed_case) 
+        $payload = json_encode($payload);
+
+        $responseFail = $this->actingAs($this->customer)->post(route('transaction' , $this->pricing->pricing_name) , [
+            'order' => $payload
+        ])->assertStatus(400); //akan mendapat status code 400 bad request
+
+
+        //valid payment method
+        $payloadSucessBca = $this->set_payload(201 , 'pending' , 'bca'); //valid bca,bni,bri,cstore,credit_card
+      
+        $payloadSucessBca = json_encode($payloadSucessBca);
+       
+        $this->actingAs($this->customer)->post(route('transaction' , $this->pricing->pricing_name) , [
+            'order' => $payloadSucessBca
+        ])->assertStatus(302); //redirect
+      
+    }
+
+     /**
+     * @group order-test-customer
+     * */  
     public function test_customer_vip_duration_expanded_when_pricing_already_available() : void
     {
         //buat vip
@@ -125,7 +149,7 @@ class OrderTest extends TestCase
        $this->assertDatabaseHas('vip_users' , [
             'pricing_id' => $this->pricing->id,
             'user_id' => $this->customer->id,
-            'vip_duration' => Carbon::parse($vip->vip_duration)->addDays(90)
+            'vip_duration' => Carbon::parse($vip->vip_duration)->addDays($this->pricing->duration)
         ]);
 
         $this->assertDatabaseMissing('vip_users' , [
@@ -135,7 +159,7 @@ class OrderTest extends TestCase
 
 
 
-    private function set_payload(string $status_code , string $transaction_status) : array
+    private function set_payload(string $status_code , string $transaction_status , string $payment = 'bca') : array
     {
         $combine_str = 'PRCZ43455934857' . $status_code . 50000 . env('MIDTRANS_SERVERKEY');
         $signature_key = hash('SHA512' , $combine_str);
@@ -144,7 +168,7 @@ class OrderTest extends TestCase
             "va_numbers" => [
                 [
                     "va_number" => "82679920479",
-                    "bank" => "bca"
+                    "bank" => $payment
                 ]
             ],
             "transaction_time" => "2023-07-08 12:58:14",

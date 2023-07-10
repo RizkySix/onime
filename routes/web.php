@@ -65,12 +65,12 @@ Route::middleware(['customer'])->group(function() {
     Route::get('/user-orders' , [DashboardController::class , 'user_order'])->name('user.orders');
 
     Route::get('/transaction-view/{pricing_name}' , [PricingOrderController::class , 'transaction_view'])->name('transaction-view');
-   Route::post('/transaction/{pricing_name}' , [PricingOrderController::class , 'transaction'])->name('transaction');
+   Route::post('/transaction/{pricing_name}' , [PricingOrderController::class , 'transaction'])->name('transaction')->middleware('allowed_payment');
    Route::get('/transaction-done/{pricing_order}' , [PricingOrderController::class , 'transaction_done'])->name('transaction-done');
    Route::post('/cancel-order/{pricing_order}' , [PricingOrderController::class , 'cancel_order'])->name('cancel-order');
    Route::delete('/cancel-order-delete/{pricing_order}' , [PricingOrderController::class , 'delete_cancel_order'])->name('cancel-order-delete');
    Route::get('/change-payment-method/{pricing_order}/edit' , [PricingOrderController::class , 'change_payment_method_view'])->name('change-payment-method-view');
-   Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method');
+   Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method')->middleware('allowed_payment');
 
   
 });

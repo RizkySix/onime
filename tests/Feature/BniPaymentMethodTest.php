@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class BriPaymentMethodTest extends TestCase
+class BniPaymentMethodTest extends TestCase
 {
     use RefreshDatabase;
     private $customer;
@@ -34,11 +34,11 @@ class BriPaymentMethodTest extends TestCase
 
 
     /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */  
-    public function test_input_order_data_for_bri(): void
+    public function test_input_order_data_for_bni(): void
     {
-        $payload = $this->set_bri_payload(201 , 'pending');
+        $payload = $this->set_bni_payload(201 , 'pending');
 
         //payload harus dirubah menjadi string json agar dapat diolah di controller
         $payload_str = json_encode($payload);
@@ -51,7 +51,7 @@ class BriPaymentMethodTest extends TestCase
         $this->assertDatabaseHas('pricing_orders' , [
             'order_id' => $payload['order_id'],
             'transaction_status' => $payload['transaction_status'],
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'gross_amount' => $payload['gross_amount']
         ]);
     
@@ -60,14 +60,14 @@ class BriPaymentMethodTest extends TestCase
         //cek konten pada halaman transaction done
        $view_trans_done = $this->actingAs($this->customer)->get(route('transaction-done' , $payload['order_id']))->assertStatus(200);
        $view_trans_done->assertSee(strtoupper($payload['transaction_status']));
-       $view_trans_done->assertSee('BRI');
+       $view_trans_done->assertSee('BNI');
        $view_trans_done->assertSee('UBAH METODE PEMBAYARAN');//btn ubah metode bayar
        $view_trans_done->assertDontSee('CANCEL ORDER');//btn cancel order tidak ada pada view transaction done
 
        //cek harusnya order sudah ada pada view list user order
        $view_list_user_order = $this->actingAs($this->customer)->get(route('user.orders'))->assertStatus(200);
        $view_list_user_order->assertSee(strtoupper($payload['transaction_status']));
-       $view_list_user_order->assertSee('BRI');
+       $view_list_user_order->assertSee('BNI');
        $view_list_user_order->assertSee('UBAH METODE PEMBAYARAN');//btn ubah metode bayar
        $view_list_user_order->assertSee('CANCEL ORDER');//btn cancel order tersedia pada list user order
 
@@ -80,7 +80,7 @@ class BriPaymentMethodTest extends TestCase
     }
 
      /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */  
     public function test_webhook_settlement_order() : void
     {
@@ -95,7 +95,7 @@ class BriPaymentMethodTest extends TestCase
             'pricing_type' => $order->pricing_type
         ]);
 
-        $payload = $this->set_bri_payload('200' , 'settlement');// set status terbaru menjadi settlement
+        $payload = $this->set_bni_payload('200' , 'settlement');// set status terbaru menjadi settlement
        
         // Kirim permintaan POST ke endpoint webhook dengan payload
         $response = $this->post(route('api.webhook'), $payload);
@@ -108,7 +108,7 @@ class BriPaymentMethodTest extends TestCase
             'order_id' => 'PRCZ43455934857',
             'transaction_status' => $payload['transaction_status'], //harus menjadi settlement
             'gross_amount' => $payload['gross_amount'],
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'pricing_type' => 'Mega vip'
         ]);
 
@@ -119,7 +119,7 @@ class BriPaymentMethodTest extends TestCase
         //pada view list user order status order harusnya sudah settlement
         $view_list_user_order = $this->actingAs($this->customer)->get(route('user.orders'))->assertStatus(200);
         $view_list_user_order->assertSee(strtoupper($payload['transaction_status']));
-        $view_list_user_order->assertSee('BRI');
+        $view_list_user_order->assertSee('BNI');
         //cancel order dan ubah metode bayar seharusnya sudah tidak tersedia lagi
         $view_list_user_order->assertDontSee('UBAH METODE PEMBAYARAN');
         $view_list_user_order->assertDontSee('CANCEL ORDER');
@@ -135,7 +135,7 @@ class BriPaymentMethodTest extends TestCase
 
 
     /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */ 
     public function test_webhook_settlement_order_failed_case() : void
     {
@@ -152,7 +152,7 @@ class BriPaymentMethodTest extends TestCase
             'pricing_type' => $order->pricing_type
         ]);
 
-        $payload = $this->set_bri_payload('200' , 'settlement');// set status terbaru menjadi settlement
+        $payload = $this->set_bni_payload('200' , 'settlement');// set status terbaru menjadi settlement
        
         // Kirim permintaan POST ke endpoint webhook dengan payload
         $response = $this->post(route('api.webhook'), $payload);
@@ -165,14 +165,14 @@ class BriPaymentMethodTest extends TestCase
             'order_id' => 'PRCZ43455934857',
             'transaction_status' => $order->transaction_status, //status masih sama cancel
             'gross_amount' => $payload['gross_amount'],
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'pricing_type' => 'Mega vip'
         ]);
 
           //pada view list user order status order harusnya masih cancel
           $view_list_user_order = $this->actingAs($this->customer)->get(route('user.orders'))->assertStatus(200);
           $view_list_user_order->assertSee(strtoupper($order->transaction_status));
-          $view_list_user_order->assertSee('BRI');
+          $view_list_user_order->assertSee('BNI');
           //cancel order dan ubah metode pembayaran harusnya tidak tersedia karena status pesanan saat ini cancel
           $view_list_user_order->assertDontSee('UBAH METODE PEMBAYARAN');
           $view_list_user_order->assertDontSee('CANCEL ORDER');
@@ -181,7 +181,7 @@ class BriPaymentMethodTest extends TestCase
 
 
      /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */ 
     public function test_webhook_cancel_order() : void
     {
@@ -197,7 +197,7 @@ class BriPaymentMethodTest extends TestCase
             'pricing_type' => $order->pricing_type
         ]);
 
-        $payload = $this->set_bri_payload('202' , 'cancel');// set status terbaru menjadi cancel
+        $payload = $this->set_bni_payload('202' , 'cancel');// set status terbaru menjadi cancel
        
         // Kirim permintaan POST ke endpoint webhook dengan payload
         $response = $this->post(route('api.webhook'), $payload);
@@ -210,7 +210,7 @@ class BriPaymentMethodTest extends TestCase
             'order_id' => 'PRCZ43455934857',
             'transaction_status' => $payload['transaction_status'], //harus menjadi cancel
             'gross_amount' => $payload['gross_amount'],
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'pricing_type' => 'Mega vip'
         ]);
 
@@ -221,7 +221,7 @@ class BriPaymentMethodTest extends TestCase
         //pada view list user order status order harusnya menjadi cancel
         $view_list_user_order = $this->actingAs($this->customer)->get(route('user.orders'))->assertStatus(200);
         $view_list_user_order->assertSee(strtoupper($payload['transaction_status']));
-        $view_list_user_order->assertSee('BRI');
+        $view_list_user_order->assertSee('BNI');
         //cancel order dan ubah metode bayar seharusnya sudah tidak tersedia lagi
         $view_list_user_order->assertDontSee('UBAH METODE PEMBAYARAN');
         $view_list_user_order->assertDontSee('CANCEL ORDER');
@@ -238,7 +238,7 @@ class BriPaymentMethodTest extends TestCase
 
 
      /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */ 
     public function test_webhook_cancel_order_failed_case() : void
     {
@@ -255,7 +255,7 @@ class BriPaymentMethodTest extends TestCase
             'pricing_type' => $order->pricing_type
         ]);
 
-        $payload = $this->set_bri_payload('202' , 'cancel');// set status terbaru menjadi cancel
+        $payload = $this->set_bni_payload('202' , 'cancel');// set status terbaru menjadi cancel
        
         // Kirim permintaan POST ke endpoint webhook dengan payload
         $response = $this->post(route('api.webhook'), $payload);
@@ -268,14 +268,14 @@ class BriPaymentMethodTest extends TestCase
             'order_id' => 'PRCZ43455934857',
             'transaction_status' => $order->transaction_status, //status masih sama settlement
             'gross_amount' => $payload['gross_amount'],
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'pricing_type' => 'Mega vip'
         ]);
 
          //pada view list user order status order harusnya masih settlement
          $view_list_user_order = $this->actingAs($this->customer)->get(route('user.orders'))->assertStatus(200);
          $view_list_user_order->assertSee(strtoupper($order->transaction_status));
-         $view_list_user_order->assertSee('BRI');
+         $view_list_user_order->assertSee('BNI');
          //cancel order dan ubah metode pembayaran harusnya tidak tersedia karena status pesanan saat ini settlement
          $view_list_user_order->assertDontSee('UBAH METODE PEMBAYARAN');
          $view_list_user_order->assertDontSee('CANCEL ORDER');
@@ -283,7 +283,7 @@ class BriPaymentMethodTest extends TestCase
     }
 
      /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */ 
     public function test_webhook_expired_order() : void
     {
@@ -299,7 +299,7 @@ class BriPaymentMethodTest extends TestCase
             'pricing_type' => $order->pricing_type
         ]);
 
-        $payload = $this->set_bri_payload('202' , 'expire');// set status terbaru menjadi expire
+        $payload = $this->set_bni_payload('202' , 'expire');// set status terbaru menjadi expire
        
         // Kirim permintaan POST ke endpoint webhook dengan payload
         $response = $this->post(route('api.webhook'), $payload);
@@ -331,7 +331,7 @@ class BriPaymentMethodTest extends TestCase
 
 
     /**
-     * @group order-test-bri
+     * @group order-test-bni
      * */ 
     public function test_webhook_expired_order_failed_case() : void
     {
@@ -348,7 +348,7 @@ class BriPaymentMethodTest extends TestCase
             'pricing_type' => $order->pricing_type
         ]);
 
-        $payload = $this->set_bri_payload('202' , 'expire');// set status terbaru menjadi expire
+        $payload = $this->set_bni_payload('202' , 'expire');// set status terbaru menjadi expire
        
         // Kirim permintaan POST ke endpoint webhook dengan payload
         $response = $this->post(route('api.webhook'), $payload);
@@ -361,14 +361,14 @@ class BriPaymentMethodTest extends TestCase
             'order_id' => 'PRCZ43455934857',
             'transaction_status' => $order->transaction_status, //status masih sama settlement
             'gross_amount' => $payload['gross_amount'],
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'pricing_type' => 'Mega vip'
         ]);
 
          //pada view list user order status order harusnya masih settlement
          $view_list_user_order = $this->actingAs($this->customer)->get(route('user.orders'))->assertStatus(200);
          $view_list_user_order->assertSee(strtoupper($order->transaction_status));
-         $view_list_user_order->assertSee('BRI');
+         $view_list_user_order->assertSee('BNI');
          //cancel order dan ubah metode pembayaran harusnya tidak tersedia karena status pesanan saat ini settlement
          $view_list_user_order->assertDontSee('UBAH METODE PEMBAYARAN');
          $view_list_user_order->assertDontSee('CANCEL ORDER');
@@ -383,7 +383,7 @@ class BriPaymentMethodTest extends TestCase
             'order_id' => 'PRCZ43455934857', 
             'transaction_status' => $transaction_status,
             'pricing_type' => 'Mega vip', //harus sama dengan nama pricing_name
-            'payment_type' => 'bri',
+            'payment_type' => 'bni',
             'pricing_price' => $this->pricing->price,
             'gross_amount' => $this->set_price()
         ]);
@@ -392,7 +392,7 @@ class BriPaymentMethodTest extends TestCase
     }
 
 
-    private function set_bri_payload(string $status_code , string $transaction_status) : array
+    private function set_bni_payload(string $status_code , string $transaction_status) : array
     {
         $combine_str = 'PRCZ43455934857' . $status_code . $this->set_price() . env('MIDTRANS_SERVERKEY');
         $signature_key = hash('SHA512' , $combine_str);
@@ -401,7 +401,7 @@ class BriPaymentMethodTest extends TestCase
             "va_numbers" => [
                 [
                     "va_number" => "826792147764872229",
-                    "bank" => "bri"
+                    "bank" => "bni"
                 ]
             ],
             "transaction_time" => "2023-07-10 09:51:50",

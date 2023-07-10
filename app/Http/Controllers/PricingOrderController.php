@@ -95,7 +95,7 @@ class PricingOrderController extends Controller
         $params = $this->set_midtrans_param($pricing_name->pricing_name , $pricing_name->discount , $pricing_name->price);
         
         $snapToken = \Midtrans\Snap::getSnapToken($params);
-      
+    
         return view('pricing-order.transaction-view' , [
             'snapToken' => $snapToken,
             'pricing' => $pricing_name
