@@ -75,7 +75,8 @@ class BniPaymentMethodTest extends TestCase
        $this->assertDatabaseCount('vip_users' , 0);
        $this->assertDatabaseMissing('vip_users' , [
         'pricing_id' => $this->pricing->id,
-        'user_id' => $this->customer->id
+        'user_id' => $this->customer->id,
+        'vip_duration' => Carbon::now()->addDays($this->pricing->duration)
        ]);
     }
 

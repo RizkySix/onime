@@ -136,6 +136,11 @@ class PricingOrderController extends Controller
                     $data_order['transaction_status'] = $response['transaction_status'];
                 }
           }
+
+          //memberikan respon error status code 412 jika transaction_status dari credit_card tidak capture
+          if($data_order['payment_type'] == 'credit_card' && $data_order['transaction_status'] != 'capture'){
+                return abort(412, 'Invalid transaction status request');
+          }
          
         $pricing_order =  PricingOrder::create([
             'user_id' => auth()->user()->id,
@@ -326,6 +331,16 @@ class PricingOrderController extends Controller
            DB::beginTransaction();
 
             DB::table('pricing_orders')->where('order_id' , $pricing_order->order_id)->lockForUpdate()->get();
+
+            //mendapat transaction status settlement jika metode bayar dengan INDOMARET
+          if($data_order['payment_type'] == 'cstore'){
+                $response = $this->get_transaction_status($data_order['order_id']);
+
+                if($response['status_code'] == '200' && $response['transaction_status'] == 'settlement'){
+                    $data_order['transaction_status'] = $response['transaction_status'];
+                }
+             }
+
             if($data_order['transaction_status'] == 'pending' || $data_order['transaction_status'] == 'capture'){
                 PricingOrder::where('order_id' , $pricing_order->order_id)->update([
                     'transaction_status' => $data_order['transaction_status'],
@@ -405,7 +420,7 @@ class PricingOrderController extends Controller
             }else{
                 return response()->json([
                     'status' => false , 
-                    'message' => 'status pesanan saat ini tidak dapat memproses perubahan'
+                    'message' => 'Transaction status cannot be updated'
                     ] , 412);
             }
           
@@ -419,7 +434,7 @@ class PricingOrderController extends Controller
           }else{
             return response()->json([
                 'status' => false , 
-                'message' => 'status pesanan saat ini tidak dapat memproses perubahan'
+                'message' => 'Transaction status cannot be updated'
                 ] , 412);
           }
             
@@ -435,7 +450,7 @@ class PricingOrderController extends Controller
             }else{
                 return response()->json([
                     'status' => false , 
-                    'message' => 'status pesanan saat ini tidak dapat memproses perubahan'
+                    'message' => 'Transaction status cannot be updated'
                     ] , 412);
             }
             

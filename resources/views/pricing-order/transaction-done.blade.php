@@ -36,6 +36,10 @@
                     <span class="fw-bold">{{ $order->order_id }}</span><br>
                     <span>Metode Pembayaran :</span> <br>
                     <span class="fw-bold">{{ strtoupper($order->payment_type) }}</span>
+                    @if ($order->payment_type == 'cstore')
+                    <br>
+                        <span class="text-muted">(Indomaret)</span>
+                    @endif
                     @if ($order->transaction_status == 'pending')
                     <form action="/change-payment-method/{{ $order->order_id }}/edit" method="GET" class="mt-4" >
                       <x-bootsrap.payment-button type="sumbit">
