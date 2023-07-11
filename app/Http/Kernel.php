@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
         'allowed_payment' => \App\Http\Middleware\AllowedPaymentMethod::class,
+        'change_payment_method' => \App\Http\Middleware\ChangePaymentMethodValidData::class,
     ];
 }

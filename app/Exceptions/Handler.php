@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -51,6 +52,9 @@ class Handler extends ExceptionHandler
                    'message' => 'Only valid user can access this endpoint',
               ], 403);
         });
+
+
+    
         
     }
 }

@@ -70,7 +70,7 @@ Route::middleware(['customer'])->group(function() {
    Route::post('/cancel-order/{pricing_order}' , [PricingOrderController::class , 'cancel_order'])->name('cancel-order');
    Route::delete('/cancel-order-delete/{pricing_order}' , [PricingOrderController::class , 'delete_cancel_order'])->name('cancel-order-delete');
    Route::get('/change-payment-method/{pricing_order}/edit' , [PricingOrderController::class , 'change_payment_method_view'])->name('change-payment-method-view');
-   Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method')->middleware('allowed_payment');
+   Route::put('/change-payment-method/{pricing_order}' , [PricingOrderController::class , 'change_payment_method'])->name('change-payment-method')->middleware(['allowed_payment' , 'change_payment_method']);
 
   
 });

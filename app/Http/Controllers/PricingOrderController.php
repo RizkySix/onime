@@ -7,6 +7,7 @@ use App\Models\PricingOrder;
 use App\Models\User;
 use App\Models\VipUser;
 use Carbon\Carbon;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -108,7 +109,7 @@ class PricingOrderController extends Controller
     public function transaction(Request $request , Pricing $pricing_name)
     {  
         $data_order = json_decode($request->order , true);
-      
+        
         $vaNumber = 'unknown';
         $vaPayment = 'unknown';
 
@@ -306,7 +307,6 @@ class PricingOrderController extends Controller
      */
     public function change_payment_method(Request $request, PricingOrder $pricing_order)
     {
-     
         $data_order = json_decode($request->order , true);
 
         $vaNumber = 'unknown';
@@ -324,14 +324,16 @@ class PricingOrderController extends Controller
 
         $message = '';
 
-        //lock menghindari race condition
+        try {
+            
+            //lock menghindari race condition
         Cache::lock('change-payment-method')->block(10 , function() 
         use($pricing_order , $data_order , $vaNumber , $vaPayment , &$message)
-        {
+        { 
            DB::beginTransaction();
 
             DB::table('pricing_orders')->where('order_id' , $pricing_order->order_id)->lockForUpdate()->get();
-
+            
             //mendapat transaction status settlement jika metode bayar dengan INDOMARET
           if($data_order['payment_type'] == 'cstore'){
                 $response = $this->get_transaction_status($data_order['order_id']);
@@ -383,6 +385,10 @@ class PricingOrderController extends Controller
         });
 
        return redirect()->route('transaction-done' , $data_order['order_id'])->with('status' , $message);
+
+        } catch (LockTimeoutException $e) {
+            return $e->failed();
+        }
 
     }
 
