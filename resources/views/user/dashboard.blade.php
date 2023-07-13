@@ -6,18 +6,19 @@
         <div class="row">
             <div class="col-sm-8 m-auto">
                 <div class="header">
-                   @if ($auth->token)
+                   @if ($auth->tokens->count())
                        <h3 class="text-center mb-4">Gunakan Token Dibawah Untuk Request API</h3>
                    @else
                    <h3 class="text-center mb-4">Silahkan Generate Token Anda Untuk Memulai</h3>
                    @endif
+                
                 </div>
 
                 <div class="token">
                     <form action="{{ route('token-maker') }}" method="POST">
                         @csrf
                             
-                        @if ($auth->token)
+                        @if ($auth->tokens->count())
                         <div class="timer">
                             @if (\Carbon\Carbon::now() > \Carbon\Carbon::parse($auth->tokens[0]->created_at)->addDays(1))
                             <h6 class="text-muted ms-auto col-sm-4 mt-2">
@@ -76,7 +77,7 @@
                                     </form>
                                 </div>
                                 <hr>
-                                @elseif($auth->vip->count() <= 1)
+                                @elseif($vip->vip_duration < \Carbon\Carbon::now())
                                     <div class="non-vip">
                                         <h5 class="fw-bold text-center">Kamu Belum Berlangganan VIP 😒</h5>
 
@@ -86,8 +87,9 @@
                                             </x-bootsrap.payment-button>
                                         </form>
                                     </div>
+                                    @break
                                 @endif
-                              
+                               
                              @endforeach
                         @else
                         <div class="non-vip">

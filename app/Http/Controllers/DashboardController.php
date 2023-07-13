@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pricing;
 use App\Models\PricingOrder;
 use App\Models\User;
+use App\Models\VipUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,27 +36,29 @@ class DashboardController extends Controller
      
       //membatasi supaya user hanya bisa generate token hanya 1x24 jam
       if($tokenCreated->values()->first() !== null && Carbon::now() < Carbon::parse($tokenCreated->values()->first())->addHours(24)){
-         return back()->with('limit' , 'Generate Token Once Per Day!');
+        return back()->with('limit' , 'Generate Token Once Per Day!');
       }
 
       $user->tokens()->delete();
 
       $tokenName = 'onime-api-' . $user->name;
+      $all_vip_user = VipUser::where('user_id' , $user->id)->where('vip_duration' , '>' , Carbon::now())->get();
    
-      if($user->vip->all() == null || $user->vip->count() <= 1 && $user->vip[0]->vip_duration < Carbon::now()){
+      if($all_vip_user->isEmpty()){ 
          $token = $user->createToken($tokenName , ['normal-token'])->plainTextToken;
       }else{
          
-         //cari id pricing dan dapatkan power darii pricing vip
-         $vip_user = $user->vip->pluck('pricing_id')->toArray();
+         //cari id pricing dan dapatkan power dari pricing vip
+         $vip_user =  $all_vip_user->implode('pricing_id' , ',');
+         $vip_user = explode(',' , $vip_user);
          $findPricing = Pricing::withTrashed()->whereIn('id' , $vip_user)->pluck('vip_power');
 
          $abilities = [];
          foreach($findPricing as $vip_power){
             //membuat abilities untuk vip token berdasarkan power pricing user
-            if($vip_power == 'NORMAL'){
+            if(strtoupper($vip_power) == 'NORMAL'){
               in_array('vip-token' , $abilities) ? : $abilities[] = 'vip-token';
-            }elseif($vip_power == 'SUPER'){
+            }elseif(strtoupper($vip_power) == 'SUPER'){
                in_array('super-vip-token' , $abilities) ? : $abilities[] = 'super-vip-token';
             }
          }
