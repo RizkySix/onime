@@ -3,6 +3,7 @@
 /public/build
 /public/hot
 /public/storage
+/public/asset-img/anime1.mp4
 /storage/*.key
 /vendor
 .env
