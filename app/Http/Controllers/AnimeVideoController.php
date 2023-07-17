@@ -16,6 +16,7 @@ use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use ZipArchive;
 use \FFMpeg\Coordinate\TimeCode;
 use \FFMpeg\Filters\Video\ClipFilter;
+use Illuminate\Support\Facades\Request;
 
 class AnimeVideoController extends Controller
 {
@@ -54,8 +55,11 @@ class AnimeVideoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        $findAnimeSlug = AnimeName::where('slug' , request('anime-slug'))->count();
+        $findAnimeSlug == 1 ? : abort(404);
+        
         return view('anime.add-anime-video');
     }
 
@@ -148,7 +152,7 @@ class AnimeVideoController extends Controller
            DB::beginTransaction(5);
 
            Storage::createDirectory('tmp-dir');
-           $zipDetail->extractTo('storage/tmp-dir');
+           $zipDetail->extractTo(public_path('storage/tmp-dir'));
            
            for($i = 0; $i < $numFiles; $i++){
             $idx = $zipDetail->statIndex($i);
@@ -180,14 +184,14 @@ class AnimeVideoController extends Controller
            $path = 'tmp-dir/' . $full_name;
            $target = $directory . '/' . $video_name;
           Storage::move($path, $target);
-
+    
           //membaca detail video
           $ffprobe = FFProbe::create([
             'ffmpeg.binaries' => env('FFMPEG_BINARIES'),
             'ffprobe.binaries' => env('FFPROBE_BINARIES'),
         ]);
 
-          $videoPath = public_path('storage/' . $target);
+          $videoPath = public_path('storage/' . $target); 
           $videoInfo = $ffprobe->streams($videoPath)->videos()->first();
           $video_duration = floor($videoInfo->get('duration') / 60);
 

@@ -9,6 +9,7 @@ class OtpsCode extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    public $timestamps = false;
     protected $dates = [
         'expired_time'
     ];

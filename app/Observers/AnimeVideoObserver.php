@@ -32,15 +32,18 @@ class AnimeVideoObserver
      public function no_event_updated(AnimeVideo $animeVideo , $folder , $newName): void
      {
           //mengatur ulang url dan storage dari relasi AnimevVideo
-          $shortOldPath = Storage::path('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $animeVideo->anime_eps);
-          $shortNewPath = Storage::path('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $newName);
-          rename($shortOldPath, $shortNewPath);
- 
-          DB::table('anime_video_shorts')
-          ->where('anime_video_id' , $animeVideo->id)
-          ->update(['short_url' => DB::raw("REGEXP_REPLACE(short_url, '" . 'clip-' . $animeVideo->anime_eps . "', '" . 
-                                                                          'clip-' . $newName . "')")
-           , 'short_name' => 'clip-' . $newName]);
+          if(Storage::exists('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $animeVideo->anime_eps)){
+            $shortOldPath = Storage::path('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $animeVideo->anime_eps);
+            $shortNewPath = Storage::path('short_anime_clip/' . 'short-' . $folder . '/' . 'clip-' . $newName);
+            rename($shortOldPath, $shortNewPath);
+   
+            DB::table('anime_video_shorts')
+            ->where('anime_video_id' , $animeVideo->id)
+            ->update(['short_url' => DB::raw("REGEXP_REPLACE(short_url, '" . 'clip-' . $animeVideo->anime_eps . "', '" . 
+                                                                            'clip-' . $newName . "')")
+             , 'short_name' => 'clip-' . $newName]);
+          }
+          
      }
 
     /**

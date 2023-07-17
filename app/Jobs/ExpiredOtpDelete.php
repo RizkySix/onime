@@ -28,6 +28,6 @@ class ExpiredOtpDelete implements ShouldQueue
      */
     public function handle(): void
     {
-         DB::table('otps_codes')->where('expired_time' , '<=' , Carbon::now()->subHours(2))->delete();
+         DB::table('otps_codes')->where('expired_time' , '<=' , Carbon::now()->subHours(1))->delete();
     }
 }

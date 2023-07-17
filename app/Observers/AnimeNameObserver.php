@@ -46,19 +46,22 @@ class AnimeNameObserver
      {
       
         //mengatur ulang url video dan storage relasi model AnimeName
-          DB::table('anime_videos')
-             ->where('anime_name_id' , $animeName->id)
-             ->update(['video_url' => DB::raw("REGEXP_REPLACE(video_url, '" . 'F-' . $oldName . "', '" . 'F-' . $newName . "')")
-             ]);
- 
-             DB::table('anime_video_shorts')
-             ->where('short_url', 'REGEXP', 'short-' . $oldName)
-             ->update(['short_url' => DB::raw("REGEXP_REPLACE(short_url, '" . 'short-' . $oldName . "', '" . 'short-' . $newName . "')")
-                 ]);
-         
-                 $oldPath = Storage::path('short_anime_clip/' . 'short-' . $oldName);
-                 $newPath = Storage::path('short_anime_clip/' . 'short-' . $newName);
-                 rename($oldPath, $newPath);
+
+        DB::table('anime_videos')
+        ->where('anime_name_id' , $animeName->id)
+        ->update(['video_url' => DB::raw("REGEXP_REPLACE(video_url, '" . 'F-' . $oldName . "', '" . 'F-' . $newName . "')")
+        ]);
+
+         if(Storage::exists('short_anime_clip/' . 'short-' . $oldName)){
+          DB::table('anime_video_shorts')
+          ->where('short_url', 'REGEXP', 'short-' . $oldName)
+          ->update(['short_url' => DB::raw("REGEXP_REPLACE(short_url, '" . 'short-' . $oldName . "', '" . 'short-' . $newName . "')")
+              ]);
+      
+              $oldPath = Storage::path('short_anime_clip/' . 'short-' . $oldName);
+              $newPath = Storage::path('short_anime_clip/' . 'short-' . $newName);
+              rename($oldPath, $newPath);
+         }
      }
 
     /**
