@@ -29,7 +29,7 @@ Project ini merupakan layanan API yang menyediakan data anime dengan token Otent
 - Laravel 10
 - MySQL
 - PHP Midtrans Payment Gateway (Snap version)
-- Laravel-ffmpeg & Laravel-ffrobe
+- Laravel-ffmpeg & Laravel-ffprobe
 - Laravel sanctum
 - dyrynda/laravel-cascade-soft-deletes
 
