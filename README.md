@@ -14,6 +14,9 @@ Project ini merupakan layanan API yang menyediakan data anime dengan token Otent
 ## How To Use
 
 - composer install
+- install ffmpeg download disini https://ffmpeg.org/download.html
+- pada .env setting FFMPEG_BINARIES= //sesuai lokasi ffmpeg.exe dalam forlder bin
+- pada .env setting FFPROBE_BINARIES= //sesuai lokasi ffprobe.exe dalam forlder bin
 - php artisan migrate:fresh
 - php artisan queue:work
 - php artisan schedule:run
