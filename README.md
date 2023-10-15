@@ -35,6 +35,8 @@ Project ini merupakan layanan API yang menyediakan data anime dengan token Otent
 - Laravel-ffmpeg & Laravel-ffprobe
 - Laravel sanctum
 - dyrynda/laravel-cascade-soft-deletes
+- Bootstrap
+- Jquery
 
 ## License
 
