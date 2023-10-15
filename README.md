@@ -9,7 +9,7 @@
 
 ## About Project
 
-Project ini merupakan layanan API yang menyediakan data anime dengan token Otentikasi. Respon yang diberikan dari layanan ini seperti judul anime, total episode, penulis, tanggal rilis, deskripsi, rating, genre, dan lain-lain. Seperti API publik pada umumnya, layanan ini juga memiliki dokumentasi berbasis website. Pengguna juga dapat berlangganan VIP dengan mengunjungi websitenya dan melakukan melalui payment gateway yang desediakan untuk mendapatkan token VIP. Video yang diupload akan otomatis dibuatkan short clip nya yang berdurasi 10 detik, dimana short clip ini dapat dijadikan preview dari anime tersebut. Project ini juga sudah tercover feature test dan uni test untuk memudahkan pengembangan nantinya. 
+Project ini merupakan layanan API yang menyediakan data anime dengan token Otentikasi. Respon yang diberikan dari layanan ini seperti judul anime, total episode, penulis, tanggal rilis, deskripsi, rating, genre, dan lain-lain. Seperti API publik pada umumnya, layanan ini juga memiliki dokumentasi berbasis website. Pengguna juga dapat berlangganan VIP dengan mengunjungi websitenya dan melakukan pembayaran melalui payment gateway yang desediakan untuk mendapatkan token VIP. Video yang diupload akan otomatis dibuatkan short clip nya yang berdurasi 10 detik, dimana short clip ini dapat dijadikan preview dari anime tersebut. Project ini juga sudah tercover feature test dan uni test untuk memudahkan pengembangan nantinya. 
 
 ## How To Use
 
